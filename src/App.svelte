@@ -75,8 +75,6 @@
     async function makeBackup(e:Event) { await AppController.backup(); }
     async function loadBackup(e:Event) { await AppController.loadBackups(); }
 
-    async function findNames(e:Event) { await AppController.generateNames($gameDataDirPath, $modDataDirPath); }
-
     function showAboutModal(e:Event) { dispAboutModal = true; }
 </script>
 
@@ -101,7 +99,7 @@
             <div class="row">
                 <PathField fieldName="Mod Data" title={"Select your mod data directory"} defaultPath={$modDataDirPath}  cVal={$modDataDirPath} handler={loadModData} />
                 <div style="height: 1px; width: 7px;" />
-                <Button text={"Find Names"} onClick={findNames} width={"100px"} />
+                <Button text={"Find Names"} onClick={() => {}} width={"100px"} />
             </div>
         </Pane>
         <Pane title="Save Data" fillParent width={"calc(100% - 34px)"}>

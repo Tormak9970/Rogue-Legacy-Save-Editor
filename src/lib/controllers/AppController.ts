@@ -22,28 +22,21 @@ import {
   changedTabs,
   discardChangesDisabled,
   dsonFiles,
-  fileNamesPath,
   saveChangesDisabled,
   saveDirPath,
   selectedTab,
   tabs,
   unchangedTabs,
 } from "../../Stores";
-import { DsonFile } from "../models/DsonFile";
-import { DsonTypes } from "../models/DsonTypes";
-import { DsonWriter } from "../models/DsonWriter";
-import { UnhashBehavior } from "../models/UnhashBehavior";
 import { Reader } from "../utils/Reader";
-import { Utils } from "../utils/Utils";
 import { BackupsController } from "./BackupsController";
-import { GenerateNamesController } from "./GenerateNamesController";
 import { ToasterController } from "./ToasterController";
+import { isSaveFile } from "../utils/Utils";
 
 /**
  * The main controller for the application
  */
 export class AppController {
-  static namesController = new GenerateNamesController();
   static backupsController = new BackupsController();
 
   /**
@@ -64,7 +57,7 @@ export class AppController {
     const saveDir = get(saveDirPath);
 
     const newTabs = {};
-    const newDsonFiles = {};
+    // const newDsonFiles = {};
     const wasChanged = {};
     if (saveDir != "") {
       const loaderId = ToasterController.showLoaderToast("Loading save data");
@@ -73,13 +66,13 @@ export class AppController {
       for (let i = 0; i < saveConts.length; i++) {
         const saveFilePath = saveConts[i];
 
-        if (Utils.isSaveFile(saveFilePath.name)) {
+        if (isSaveFile(saveFilePath.name)) {
           const data = await fs.readBinaryFile(saveFilePath.path);
           const reader = new Reader(data);
-          const dson = new DsonFile(reader, UnhashBehavior.POUNDUNHASH);
+          // const dson = new DsonFile(reader, UnhashBehavior.POUNDUNHASH);
 
-          newTabs[saveFilePath.name] = dson.asJson();
-          newDsonFiles[saveFilePath.name] = dson;
+          // newTabs[saveFilePath.name] = dson.asJson();
+          // newDsonFiles[saveFilePath.name] = dson;
           wasChanged[saveFilePath.name] = false;
         }
       }
@@ -93,7 +86,7 @@ export class AppController {
     unchangedTabs.set(JSON.parse(JSON.stringify(newTabs)));
     changedTabs.set(wasChanged);
     tabs.set(newTabs);
-    dsonFiles.set(newDsonFiles);
+    // dsonFiles.set(newDsonFiles);
 
     discardChangesDisabled.set(true);
     saveChangesDisabled.set(true);
@@ -110,34 +103,14 @@ export class AppController {
    * Load up the existing backups
    */
   static async loadBackups() {
-    await AppController.backupsController.showBackupsModal();
+    
   }
 
   /**
    * Saves the current changes
    */
   static async saveChanges() {
-    const revision = Object.values(get(dsonFiles))[0].header.revision;
-    const changes = Object.entries(get(tabs));
-    const cTabs = get(changedTabs);
-
-    // TODO only write files with changes
-    for (let i = 0; i < changes.length; i++) {
-      const fileName = changes[i][0];
-
-      if (cTabs[fileName]) {
-        const filePath = await path.join(get(saveDirPath), fileName);
-        const newData = changes[i][1];
-
-        const dWriter = new DsonWriter(newData as any, revision);
-        const dataBuf = dWriter.bytes();
-
-        await fs.writeBinaryFile(filePath, dataBuf);
-      }
-    }
-
-    discardChangesDisabled.set(true);
-    saveChangesDisabled.set(true);
+    
   }
 
   /**
@@ -162,32 +135,5 @@ export class AppController {
    */
   static async reload() {
     await AppController.loadSaves();
-  }
-
-  /**
-   * Generates the name hashes used when loading user saves
-   * @param gamePath the gameData path
-   * @param modPath the modData path, if applicable
-   */
-  static async generateNames(gamePath: string, modPath: string): Promise<void> {
-    const fileNamesFilePath = get(fileNamesPath);
-    const names = await AppController.namesController.generateNames(
-      gamePath,
-      modPath
-    );
-
-    await fs.writeTextFile(fileNamesFilePath, Array.from(names).join("\n"));
-
-    DsonTypes.offerNames(Array.from(names));
-  }
-
-  /**
-   * Updates the in-memory hash names based on a cached file
-   */
-  static async updateNames(): Promise<void> {
-    const fileNamesFilePath = get(fileNamesPath);
-    const names = (await fs.readTextFile(fileNamesFilePath)).split("\n");
-
-    DsonTypes.offerNames(Array.from(names));
   }
 }

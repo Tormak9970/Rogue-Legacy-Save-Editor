@@ -26,7 +26,7 @@
 
 <div class="pane" style="width: {width}; height: {height}; margin: {margin}; padding: {padding};{fillParent ? " flex: 1;" : ""}">
     <div class="title-cont">
-        <div class="title">{title}</div>
+        <!-- <div class="title">{title}</div> -->
         <div class="border-blocker" />
     </div>
     <slot />

@@ -20,8 +20,8 @@ import { fs, path } from "@tauri-apps/api";
 import JSZip from "jszip";
 import { get } from "svelte/store";
 import { appDataDir, saveDirPath, showLoadBackupModal } from "../../Stores";
-import { Utils } from "../utils/Utils";
 import { ToasterController } from "./ToasterController";
+import { isSaveFile } from "../utils/Utils";
 
 type SaveData = {
   saveSlot: string;
@@ -145,7 +145,7 @@ export class BackupsController {
     for (let i = 0; i < saveConts.length; i++) {
       const saveFilePath = saveConts[i];
 
-      if (Utils.isSaveFile(saveFilePath.name)) {
+      if (isSaveFile(saveFilePath.name)) {
         const name = saveFilePath.name;
         const data = await fs.readBinaryFile(saveFilePath.path);
 

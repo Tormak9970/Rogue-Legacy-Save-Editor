@@ -86,7 +86,7 @@
         "width": 1170,
         "decorations": false,
         "center": true,
-        "visible": false
+        "visible": true
       }
     ]
   }

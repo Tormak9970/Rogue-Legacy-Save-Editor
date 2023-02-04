@@ -43,16 +43,16 @@
 		
         // $appDataDir = settings.appDataDir == "" ? (await path.appDir()) : settings.appDataDir;
         // $fileNamesPath = await path.join($appDataDir, "filenames.txt");
-        // $saveDirPath = settings.saveDir;
+        $saveDirPath = settings.saveDir;
         // $gameDataDirPath = settings.gameDataDir;
         // $modDataDirPath = settings.modDataDir;
 
-        // saveDirPath.subscribe(async (newVal:string) => {
-        //     await SettingsManager.updateSettings({
-        //         prop: "saveDir",
-        //         data: newVal
-        //     });
-        // });
+        saveDirPath.subscribe(async (newVal:string) => {
+            await SettingsManager.updateSettings({
+                prop: "saveDir",
+                data: newVal
+            });
+        });
         // gameDataDirPath.subscribe(async (newVal:string) => {
         //     await SettingsManager.updateSettings({
         //         prop: "gameDataDir",

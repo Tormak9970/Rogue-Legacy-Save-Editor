@@ -17,7 +17,6 @@
  */
 import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
-import type { DsonFile } from "./lib/models/DsonFile";
 
 export const appDataDir = writable("");
 export const fileNamesPath = writable("");
@@ -27,7 +26,7 @@ export const modDataDirPath = writable("");
 
 export const unchangedTabs: Writable<{ [key: string]: object }> = writable({});
 export const changedTabs: Writable<{ [key: string]: boolean }> = writable({});
-export const dsonFiles: Writable<{ [key: string]: DsonFile }> = writable({});
+export const dsonFiles: Writable<{ [key: string]: any }> = writable({}); //TODO change this to be of type save file
 export const tabs: Writable<{ [key: string]: object }> = writable({});
 export const selectedTab = writable("");
 
