@@ -1,7 +1,7 @@
 /**
  * DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
  * Copyright (C) 2022 Travis Lane (Tormak)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@
  */
 import "./style.css";
 import App from "./App.svelte";
-import { getMatches } from '@tauri-apps/api/cli'
+import { getMatches } from "@tauri-apps/api/cli";
 import { CliController } from "./lib/controllers/CliController";
 import { getCurrent } from "@tauri-apps/api/window";
 
@@ -29,7 +29,7 @@ getMatches().then((matches) => {
   const mainWindow = getCurrent();
   const bArgsLen = Object.keys(matches?.args).length > 0;
   const cmdName = matches?.subcommand?.name;
-  
+
   if (bArgsLen || (cmdName && cmdName != "")) {
     CliController.init(matches, mainWindow);
   } else {

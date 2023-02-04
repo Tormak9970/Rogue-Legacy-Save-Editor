@@ -41,62 +41,62 @@
         await SettingsManager.setSettingsPath();
 		let settings:AppSettings = JSON.parse(await fs.readTextFile(SettingsManager.settingsPath));
 		
-        $appDataDir = settings.appDataDir == "" ? (await path.appDir()) : settings.appDataDir;
-        $fileNamesPath = await path.join($appDataDir, "filenames.txt");
-        $saveDirPath = settings.saveDir;
-        $gameDataDirPath = settings.gameDataDir;
-        $modDataDirPath = settings.modDataDir;
+        // $appDataDir = settings.appDataDir == "" ? (await path.appDir()) : settings.appDataDir;
+        // $fileNamesPath = await path.join($appDataDir, "filenames.txt");
+        // $saveDirPath = settings.saveDir;
+        // $gameDataDirPath = settings.gameDataDir;
+        // $modDataDirPath = settings.modDataDir;
 
-        saveDirPath.subscribe(async (newVal:string) => {
-            await SettingsManager.updateSettings({
-                prop: "saveDir",
-                data: newVal
-            });
-        });
-        gameDataDirPath.subscribe(async (newVal:string) => {
-            await SettingsManager.updateSettings({
-                prop: "gameDataDir",
-                data: newVal
-            });
-        });
-        modDataDirPath.subscribe(async (newVal:string) => {
-            await SettingsManager.updateSettings({
-                prop: "modDataDir",
-                data: newVal
-            });
-        });
-        selectedTab.subscribe(async (newVal:string) => {
-            await SettingsManager.updateSettings({
-                prop: "selectedTab",
-                data: newVal
-            });
-        });
+        // saveDirPath.subscribe(async (newVal:string) => {
+        //     await SettingsManager.updateSettings({
+        //         prop: "saveDir",
+        //         data: newVal
+        //     });
+        // });
+        // gameDataDirPath.subscribe(async (newVal:string) => {
+        //     await SettingsManager.updateSettings({
+        //         prop: "gameDataDir",
+        //         data: newVal
+        //     });
+        // });
+        // modDataDirPath.subscribe(async (newVal:string) => {
+        //     await SettingsManager.updateSettings({
+        //         prop: "modDataDir",
+        //         data: newVal
+        //     });
+        // });
+        // selectedTab.subscribe(async (newVal:string) => {
+        //     await SettingsManager.updateSettings({
+        //         prop: "selectedTab",
+        //         data: newVal
+        //     });
+        // });
 
         await AppController.init();
         
-        if ($saveDirPath != "") {
-            if ($gameDataDirPath == "") {
-                // TODO show toast to prompt user to choose directory
-                ToasterController.showGenericToast("Please select a game data directory", {
-                    "--toastWidth": "400px"
-                });
-            } else {
-                // @ts-ignore
-                if (!(await fs.exists($fileNamesPath)) && $gameDataDirPath != "") {
-                    await AppController.generateNames($gameDataDirPath, $modDataDirPath);
-                } else {
-                    await AppController.updateNames();
-                }
-                await AppController.loadSaves();
-            }
-        }
+        // if ($saveDirPath != "") {
+        //     if ($gameDataDirPath == "") {
+        //         // TODO show toast to prompt user to choose directory
+        //         ToasterController.showGenericToast("Please select a game data directory", {
+        //             "--toastWidth": "400px"
+        //         });
+        //     } else {
+        //         // @ts-ignore
+        //         if (!(await fs.exists($fileNamesPath)) && $gameDataDirPath != "") {
+        //             await AppController.generateNames($gameDataDirPath, $modDataDirPath);
+        //         } else {
+        //             await AppController.updateNames();
+        //         }
+        //         await AppController.loadSaves();
+        //     }
+        // }
     });
 </script>
 
 <div data-tauri-drag-region class="titlebar">
     <div class="info">
         <img src="/logo.png" alt="logo" height="25" style="margin-left: 7px;">
-        <div style="margin-left: 10px; margin-right: 30px;">Darkest Dungeon Save Editor</div>
+        <div style="margin-left: 10px; margin-right: 30px;">Rogue Legacy Save Editor</div>
     </div>
     <div class="btns">
         <div bind:this="{minimize}" class="titlebar-button" id="titlebar-minimize">

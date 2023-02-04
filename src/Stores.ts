@@ -1,7 +1,7 @@
 /**
  * DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
  * Copyright (C) 2022 Travis Lane (Tormak)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -25,10 +25,10 @@ export const saveDirPath = writable("");
 export const gameDataDirPath = writable("");
 export const modDataDirPath = writable("");
 
-export const unchangedTabs:Writable<{[key:string]:object}> = writable({});
-export const changedTabs:Writable<{[key:string]:boolean}> = writable({});
-export const dsonFiles:Writable<{[key:string]:DsonFile}> = writable({});
-export const tabs:Writable<{[key:string]:object}> = writable({});
+export const unchangedTabs: Writable<{ [key: string]: object }> = writable({});
+export const changedTabs: Writable<{ [key: string]: boolean }> = writable({});
+export const dsonFiles: Writable<{ [key: string]: DsonFile }> = writable({});
+export const tabs: Writable<{ [key: string]: object }> = writable({});
 export const selectedTab = writable("");
 
 export const loaderProgress = writable("0%");

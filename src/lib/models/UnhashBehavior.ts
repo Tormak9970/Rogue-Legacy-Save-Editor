@@ -1,7 +1,7 @@
 /**
  * DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
  * Copyright (C) 2022 Travis Lane (Tormak)
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,7 +20,7 @@
  * The available unhash behaviors
  */
 export enum UnhashBehavior {
-    NONE, // Don't unhash, works in all cases
-    UNHASH, // Simple unhash, useful for simply looking at the files
-    POUNDUNHASH, // Unhash as ###string, useful combination: Reasonable safety against accidental collisions, still somewhat readable
+  NONE, // Don't unhash, works in all cases
+  UNHASH, // Simple unhash, useful for simply looking at the files
+  POUNDUNHASH, // Unhash as ###string, useful combination: Reasonable safety against accidental collisions, still somewhat readable
 }
