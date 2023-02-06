@@ -107,7 +107,7 @@
         </Pane>
         <Pane padding={"7px"} width={"calc(100% - 34px)"}>
             <div class="bottom-wrapper">
-                <div class="rights">© Travis Lane 2022</div>
+                <div class="rights">© Travis Lane 2023</div>
                 <div class="bottom-panel">
                     <Button text={"About"} onClick={showAboutModal} width={"60px"} />
                     <div style="width: 7px; height: 1px;" />

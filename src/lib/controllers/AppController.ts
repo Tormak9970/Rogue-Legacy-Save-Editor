@@ -1,27 +1,10 @@
-/**
- * DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
- * Copyright (C) 2022 Travis Lane (Tormak)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>
- */
 import { fs, path } from "@tauri-apps/api";
 import { get } from "svelte/store";
 import {
   appDataDir,
   changedTabs,
   discardChangesDisabled,
-  dsonFiles,
+  saveFiles,
   saveChangesDisabled,
   saveDirPath,
   selectedTab,
@@ -32,6 +15,7 @@ import { Reader } from "../utils/Reader";
 import { BackupsController } from "./BackupsController";
 import { ToasterController } from "./ToasterController";
 import { isSaveFile } from "../utils/Utils";
+import { Rogue1Save } from "../model/Rogue1Save";
 
 /**
  * The main controller for the application
@@ -57,7 +41,7 @@ export class AppController {
     const saveDir = get(saveDirPath);
 
     const newTabs = {};
-    // const newDsonFiles = {};
+    const newSaveFiles = {};
     const wasChanged = {};
     if (saveDir != "") {
       const loaderId = ToasterController.showLoaderToast("Loading save data");
@@ -69,10 +53,10 @@ export class AppController {
         if (isSaveFile(saveFilePath.name)) {
           const data = await fs.readBinaryFile(saveFilePath.path);
           const reader = new Reader(data);
-          // const dson = new DsonFile(reader, UnhashBehavior.POUNDUNHASH);
+          const save = new Rogue1Save(reader); //! need to make this alternate between 1 and 2
 
-          // newTabs[saveFilePath.name] = dson.asJson();
-          // newDsonFiles[saveFilePath.name] = dson;
+          newTabs[saveFilePath.name] = save.asJson();
+          newSaveFiles[saveFilePath.name] = save;
           wasChanged[saveFilePath.name] = false;
         }
       }
@@ -86,7 +70,7 @@ export class AppController {
     unchangedTabs.set(JSON.parse(JSON.stringify(newTabs)));
     changedTabs.set(wasChanged);
     tabs.set(newTabs);
-    // dsonFiles.set(newDsonFiles);
+    saveFiles.set(newSaveFiles);
 
     discardChangesDisabled.set(true);
     saveChangesDisabled.set(true);

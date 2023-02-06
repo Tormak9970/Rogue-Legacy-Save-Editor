@@ -41,11 +41,8 @@
         await SettingsManager.setSettingsPath();
 		let settings:AppSettings = JSON.parse(await fs.readTextFile(SettingsManager.settingsPath));
 		
-        // $appDataDir = settings.appDataDir == "" ? (await path.appDir()) : settings.appDataDir;
-        // $fileNamesPath = await path.join($appDataDir, "filenames.txt");
+        $appDataDir = settings.appDataDir == "" ? (await path.appDir()) : settings.appDataDir;
         $saveDirPath = settings.saveDir;
-        // $gameDataDirPath = settings.gameDataDir;
-        // $modDataDirPath = settings.modDataDir;
 
         saveDirPath.subscribe(async (newVal:string) => {
             await SettingsManager.updateSettings({
@@ -53,43 +50,31 @@
                 data: newVal
             });
         });
-        // gameDataDirPath.subscribe(async (newVal:string) => {
-        //     await SettingsManager.updateSettings({
-        //         prop: "gameDataDir",
-        //         data: newVal
-        //     });
-        // });
-        // modDataDirPath.subscribe(async (newVal:string) => {
-        //     await SettingsManager.updateSettings({
-        //         prop: "modDataDir",
-        //         data: newVal
-        //     });
-        // });
-        // selectedTab.subscribe(async (newVal:string) => {
-        //     await SettingsManager.updateSettings({
-        //         prop: "selectedTab",
-        //         data: newVal
-        //     });
-        // });
+        selectedTab.subscribe(async (newVal:string) => {
+            await SettingsManager.updateSettings({
+                prop: "selectedTab",
+                data: newVal
+            });
+        });
 
         await AppController.init();
         
-        // if ($saveDirPath != "") {
-        //     if ($gameDataDirPath == "") {
-        //         // TODO show toast to prompt user to choose directory
-        //         ToasterController.showGenericToast("Please select a game data directory", {
-        //             "--toastWidth": "400px"
-        //         });
-        //     } else {
-        //         // @ts-ignore
-        //         if (!(await fs.exists($fileNamesPath)) && $gameDataDirPath != "") {
-        //             await AppController.generateNames($gameDataDirPath, $modDataDirPath);
-        //         } else {
-        //             await AppController.updateNames();
-        //         }
-        //         await AppController.loadSaves();
-        //     }
-        // }
+        if ($saveDirPath != "") {
+            // if ($gameDataDirPath == "") {
+            //     // TODO show toast to prompt user to choose directory
+            //     ToasterController.showGenericToast("Please select a game data directory", {
+            //         "--toastWidth": "400px"
+            //     });
+            // } else {
+            //     // @ts-ignore
+            //     if (!(await fs.exists($fileNamesPath)) && $gameDataDirPath != "") {
+            //         await AppController.generateNames($gameDataDirPath, $modDataDirPath);
+            //     } else {
+            //         await AppController.updateNames();
+            //     }
+            //     await AppController.loadSaves();
+            // }
+        }
     });
 </script>
 
