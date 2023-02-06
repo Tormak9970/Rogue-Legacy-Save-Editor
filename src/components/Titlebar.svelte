@@ -1,28 +1,10 @@
-<!--
- DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
- Copyright (C) 2022 Travis Lane (Tormak)
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program. If not, see <https://www.gnu.org/licenses/>
- -->
 <script lang="ts">
     import { fs, path } from "@tauri-apps/api";
     import { appWindow } from '@tauri-apps/api/window';
     import { onMount } from 'svelte';
     import { AppController } from "../lib/controllers/AppController";
-    import { ToasterController } from "../lib/controllers/ToasterController";
     import { SettingsManager } from "../lib/utils/SettingsManager";
-    import { appDataDir, fileNamesPath, gameDataDirPath, modDataDirPath, saveDirPath, selectedTab } from "../Stores";
+    import { appDataDir, saveDirPath, selectedTab } from "../Stores";
 
     let minimize:HTMLDivElement;
     let maximize:HTMLDivElement;
@@ -60,20 +42,7 @@
         await AppController.init();
         
         if ($saveDirPath != "") {
-            // if ($gameDataDirPath == "") {
-            //     // TODO show toast to prompt user to choose directory
-            //     ToasterController.showGenericToast("Please select a game data directory", {
-            //         "--toastWidth": "400px"
-            //     });
-            // } else {
-            //     // @ts-ignore
-            //     if (!(await fs.exists($fileNamesPath)) && $gameDataDirPath != "") {
-            //         await AppController.generateNames($gameDataDirPath, $modDataDirPath);
-            //     } else {
-            //         await AppController.updateNames();
-            //     }
-            //     await AppController.loadSaves();
-            // }
+            await AppController.loadSaves();
         }
     });
 </script>
