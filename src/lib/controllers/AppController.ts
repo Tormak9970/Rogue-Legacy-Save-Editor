@@ -29,7 +29,7 @@ export class AppController {
   static async init() {
     const appDir = get(appDataDir);
     const backupPath = await path.join(appDir, "backups");
-    // @ts-ignore
+    
     if (!(await fs.exists(backupPath))) await fs.createDir(backupPath);
     this.backupsController.setBackupDir(backupPath);
   }
@@ -40,40 +40,40 @@ export class AppController {
   static async loadSaves() {
     const saveDir = get(saveDirPath);
 
-    const newTabs = {};
-    const newSaveFiles = {};
-    const wasChanged = {};
-    if (saveDir != "") {
-      const loaderId = ToasterController.showLoaderToast("Loading save data");
-      const saveConts = await fs.readDir(saveDir);
+    // const newTabs = {};
+    // const newSaveFiles = {};
+    // const wasChanged = {};
+    // if (saveDir != "") {
+    //   const loaderId = ToasterController.showLoaderToast("Loading save data");
+    //   const saveConts = await fs.readDir(saveDir);
 
-      for (let i = 0; i < saveConts.length; i++) {
-        const saveFilePath = saveConts[i];
+    //   for (let i = 0; i < saveConts.length; i++) {
+    //     const saveFilePath = saveConts[i];
 
-        if (isSaveFile(saveFilePath.name)) {
-          const data = await fs.readBinaryFile(saveFilePath.path);
-          const reader = new Reader(data);
-          const save = new Rogue1Save(reader); //! need to make this alternate between 1 and 2
+    //     if (isSaveFile(saveFilePath.name)) {
+    //       const data = await fs.readBinaryFile(saveFilePath.path);
+    //       const reader = new Reader(data);
+    //       const save = new Rogue1Save(reader); //! need to make this alternate between 1 and 2
 
-          newTabs[saveFilePath.name] = save.asJson();
-          newSaveFiles[saveFilePath.name] = save;
-          wasChanged[saveFilePath.name] = false;
-        }
-      }
-      ToasterController.remLoaderToast(loaderId);
+    //       newTabs[saveFilePath.name] = save.asJson();
+    //       newSaveFiles[saveFilePath.name] = save;
+    //       wasChanged[saveFilePath.name] = false;
+    //     }
+    //   }
+    //   ToasterController.remLoaderToast(loaderId);
 
-      setTimeout(() => {
-        ToasterController.showSuccessToast("Saves loaded!");
-      }, 500);
-    }
+    //   setTimeout(() => {
+    //     ToasterController.showSuccessToast("Saves loaded!");
+    //   }, 500);
+    // }
 
-    unchangedTabs.set(JSON.parse(JSON.stringify(newTabs)));
-    changedTabs.set(wasChanged);
-    tabs.set(newTabs);
-    saveFiles.set(newSaveFiles);
+    // unchangedTabs.set(JSON.parse(JSON.stringify(newTabs)));
+    // changedTabs.set(wasChanged);
+    // tabs.set(newTabs);
+    // saveFiles.set(newSaveFiles);
 
-    discardChangesDisabled.set(true);
-    saveChangesDisabled.set(true);
+    // discardChangesDisabled.set(true);
+    // saveChangesDisabled.set(true);
   }
 
   /**

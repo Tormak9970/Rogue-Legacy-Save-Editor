@@ -51,7 +51,12 @@
                 <Button text={"Make Backup"} onClick={makeBackup} width={"100px"} />
             </div>
             <div class="row">
-                <!-- <PathField fieldName="Game Data" title={"Select your game data directory"} defaultPath={$gameDataDirPath} cVal={$gameDataDirPath} handler={loadGameData} /> -->
+                <PathField fieldName="Game Data" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
+                <div style="height: 1px; width: 7px;" />
+                <Button text={"Load Backup"} onClick={loadBackup} width={"100px"} />
+            </div>
+            <div class="row">
+                <PathField fieldName="Game Data" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
                 <div style="height: 1px; width: 7px;" />
                 <Button text={"Load Backup"} onClick={loadBackup} width={"100px"} />
             </div>
