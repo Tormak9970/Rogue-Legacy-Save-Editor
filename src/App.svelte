@@ -39,7 +39,7 @@
 
 <main>
 	<Titlebar />
-    <ConfirmModal width={"250px"} show={$showConfirmDiscard} message={"Are you sure you want to discard your changes?"} onConfirm={discardChanges} onCancel={async () => { $showConfirmDiscard = false; }} />
+    <!-- <ConfirmModal width={"250px"} show={$showConfirmDiscard} message={"Are you sure you want to discard your changes?"} onConfirm={discardChanges} onCancel={async () => { $showConfirmDiscard = false; }} />
     <ConfirmModal width={"300px"} show={$showConfirmReload} message={"Are you sure you want to reload? You will loose your changes."} onConfirm={reload} onCancel={async () => { $showConfirmReload = false; }} />
     <AboutModal show={dispAboutModal} closeFunc={() => { dispAboutModal = false; }} />
     <LoadBackupModal />
@@ -80,7 +80,7 @@
                 </div>
             </div>
         </Pane>
-	</div>
+	</div> -->
 </main>
 <SvelteToast />
 

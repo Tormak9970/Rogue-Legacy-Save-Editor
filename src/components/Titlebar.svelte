@@ -4,7 +4,7 @@
     import { onMount } from 'svelte';
     import { AppController } from "../lib/controllers/AppController";
     import { SettingsManager } from "../lib/utils/SettingsManager";
-    import { appDataDir, saveDirPath, selectedTab } from "../Stores";
+    import { appDataDir, saveDirPath, selectedGame, selectedTab } from "../Stores";
 
     let minimize:HTMLDivElement;
     let maximize:HTMLDivElement;
@@ -21,14 +21,22 @@
         close.addEventListener('click', () => appWindow.close());
 
         await SettingsManager.setSettingsPath();
+        console.log(SettingsManager.settingsPath)
 		let settings:AppSettings = JSON.parse(await fs.readTextFile(SettingsManager.settingsPath));
 		
-        $appDataDir = settings.appDataDir == "" ? (await path.appDir()) : settings.appDataDir;
-        $saveDirPath = settings.saveDir;
+        $appDataDir = settings.appDataDir == "" ? (await path.appConfigDir()) : settings.appDataDir;
+        $selectedGame = settings.selectedGame;
+        $saveDirPath = $selectedGame == 1 ? settings.legacy1SaveDir : settings.legacy2SaveDir;
 
+        selectedGame.subscribe(async (newVal:number) => {
+            await SettingsManager.updateSettings({
+                prop: "selectedGame",
+                data: newVal
+            });
+        });
         saveDirPath.subscribe(async (newVal:string) => {
             await SettingsManager.updateSettings({
-                prop: "saveDir",
+                prop: $selectedGame == 1 ? "legacy1SaveDir": "legacy2SaveDir",
                 data: newVal
             });
         });

@@ -20,6 +20,6 @@ export function throttle(func: any, wait: number) {
   };
 }
 
-export function isSaveFile(fileName:string): boolean {
+export function isSaveFile(fileName: string): boolean {
   return false;
 }

@@ -1,5 +1,8 @@
 {
+  "version": "",
   "appDataDir": "",
+  "selectedTab": "",
+  "selectedGame": 1,
   "legacy1SaveDir": "",
   "legacy2SaveDir": ""
 }

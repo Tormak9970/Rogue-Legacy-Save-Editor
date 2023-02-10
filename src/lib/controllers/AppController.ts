@@ -29,7 +29,7 @@ export class AppController {
   static async init() {
     const appDir = get(appDataDir);
     const backupPath = await path.join(appDir, "backups");
-    
+
     if (!(await fs.exists(backupPath))) await fs.createDir(backupPath);
     this.backupsController.setBackupDir(backupPath);
   }
@@ -86,16 +86,12 @@ export class AppController {
   /**
    * Load up the existing backups
    */
-  static async loadBackups() {
-    
-  }
+  static async loadBackups() {}
 
   /**
    * Saves the current changes
    */
-  static async saveChanges() {
-    
-  }
+  static async saveChanges() {}
 
   /**
    * Discards the current changes

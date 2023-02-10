@@ -10,19 +10,19 @@ export class SettingsManager {
    * Sets `settingsPath` and copies default settings if necessary
    */
   static async setSettingsPath() {
-    const appDir = await path.appDir();
+    const appDir = await path.appConfigDir();
     // @ts-ignore
     if (!(await fs.exists(appDir))) {
       await fs.createDir(appDir);
     }
-    const setsPath = await path.join(await path.appDir(), "settings.json");
+    const setsPath = await path.join(await path.appConfigDir(), "settings.json");
     // @ts-ignore
     if (!(await fs.exists(setsPath))) {
       await fs.readTextFile(setsPath).then(
         () => {},
         async () => {
           await fs.copyFile(
-            await path.join(await path.resourceDir(), "_up_", "settings.json"),
+            await path.resolveResource("../settings.json"),
             setsPath
           );
         }
