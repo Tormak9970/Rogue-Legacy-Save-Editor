@@ -1,4 +1,4 @@
-\<script lang="ts">
+<script lang="ts">
 	import { SvelteToast } from "@zerodevx/svelte-toast";
     import Button from "./components/interactable/Button.svelte";
     import Pane from "./components/layout/Pane.svelte";
@@ -39,7 +39,7 @@
 
 <main>
 	<Titlebar />
-    <!-- <ConfirmModal width={"250px"} show={$showConfirmDiscard} message={"Are you sure you want to discard your changes?"} onConfirm={discardChanges} onCancel={async () => { $showConfirmDiscard = false; }} />
+    <ConfirmModal width={"250px"} show={$showConfirmDiscard} message={"Are you sure you want to discard your changes?"} onConfirm={discardChanges} onCancel={async () => { $showConfirmDiscard = false; }} />
     <ConfirmModal width={"300px"} show={$showConfirmReload} message={"Are you sure you want to reload? You will loose your changes."} onConfirm={reload} onCancel={async () => { $showConfirmReload = false; }} />
     <AboutModal show={dispAboutModal} closeFunc={() => { dispAboutModal = false; }} />
     <LoadBackupModal />
@@ -49,11 +49,6 @@
                 <PathField fieldName="Save Directory" title={"Select a save directory"} defaultPath={$saveDirPath} cVal={$saveDirPath} handler={loadSave} />
                 <div style="height: 1px; width: 7px;" />
                 <Button text={"Make Backup"} onClick={makeBackup} width={"100px"} />
-            </div>
-            <div class="row">
-                <PathField fieldName="Game Data" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
-                <div style="height: 1px; width: 7px;" />
-                <Button text={"Load Backup"} onClick={loadBackup} width={"100px"} />
             </div>
             <div class="row">
                 <PathField fieldName="Game Data" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
@@ -80,7 +75,7 @@
                 </div>
             </div>
         </Pane>
-	</div> -->
+	</div>
 </main>
 <SvelteToast />
 
