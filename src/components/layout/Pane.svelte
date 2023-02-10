@@ -1,6 +1,6 @@
 <!--
- DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
- Copyright (C) 2022 Travis Lane (Tormak)
+ Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2.
+ Copyright (C) 2023 Travis Lane (Tormak)
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  along with this program. If not, see <https://www.gnu.org/licenses/>
  -->
 <script lang="ts">
+    // svelte-ignore unused-export-let
     export let title:string = "";
     export let width:string = "100%";
     export let height:string = "auto";
@@ -51,7 +52,7 @@
         font-size: 13px;
     }
 
-    .title { z-index: 1; }
+    /* .title { z-index: 1; } */
 
     .pane .border-blocker {
         z-index: -1;

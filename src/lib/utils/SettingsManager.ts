@@ -32,6 +32,40 @@ export class SettingsManager {
   }
 
   /**
+   * Gets the settings data and updates it if the app version is older.
+   */
+  static async getSettings(): Promise<AppSettings> {
+    let settings:AppSettings;
+    const currentSettings:any = JSON.parse(await fs.readTextFile(SettingsManager.settingsPath));
+
+    settings = {...currentSettings};
+    if (currentSettings.version !== __APP_VERSION__) {
+      const defaultSettings = JSON.parse(await fs.readTextFile(await path.resolveResource("../settings.json")));
+
+      const curEntries = Object.entries(currentSettings);
+      const curKeys = Object.keys(currentSettings);
+      const defEntries = Object.entries(defaultSettings);
+      const defKeys = Object.keys(defaultSettings);
+
+      for (const [key, val] of defEntries) {
+        if (!curKeys.includes(key)) {
+          settings[key] = val;
+        }
+      }
+
+      for (const [key, _] of curEntries) {
+        if (!defKeys.includes(key)) {
+          delete settings[key];
+        }
+      }
+
+      settings.version = __APP_VERSION__;
+    }
+    
+    return settings;
+  }
+
+  /**
    * Updates a field settings JSON with the provided data
    * @param data Specifies the field to set and the data to set it to
    */

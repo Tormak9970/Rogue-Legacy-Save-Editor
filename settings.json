@@ -2,7 +2,9 @@
   "version": "",
   "appDataDir": "",
   "selectedTab": "",
-  "selectedGame": 1,
+  "seriesEntry": 0,
   "legacy1SaveDir": "",
-  "legacy2SaveDir": ""
+  "legacy1Version": "",
+  "legacy2SaveDir": "",
+  "legacy2Version": ""
 }

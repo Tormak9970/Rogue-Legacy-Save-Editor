@@ -1,10 +1,25 @@
+<!--
+ Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2.
+ Copyright (C) 2023 Travis Lane (Tormak)
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+ -->
 <script lang="ts">
-    import { fs, path } from "@tauri-apps/api";
     import { appWindow } from '@tauri-apps/api/window';
     import { onMount } from 'svelte';
     import { AppController } from "../lib/controllers/AppController";
-    import { SettingsManager } from "../lib/utils/SettingsManager";
-    import { appDataDir, saveDirPath, selectedGame, selectedTab } from "../Stores";
+    import { saveDirPath, seriesEntry } from "../Stores";
 
     let minimize:HTMLDivElement;
     let maximize:HTMLDivElement;
@@ -20,33 +35,6 @@
         });
         close.addEventListener('click', () => appWindow.close());
 
-        await SettingsManager.setSettingsPath();
-        console.log(SettingsManager.settingsPath)
-		let settings:AppSettings = JSON.parse(await fs.readTextFile(SettingsManager.settingsPath));
-		
-        $appDataDir = settings.appDataDir == "" ? (await path.appConfigDir()) : settings.appDataDir;
-        $selectedGame = settings.selectedGame;
-        $saveDirPath = $selectedGame == 1 ? settings.legacy1SaveDir : settings.legacy2SaveDir;
-
-        selectedGame.subscribe(async (newVal:number) => {
-            await SettingsManager.updateSettings({
-                prop: "selectedGame",
-                data: newVal
-            });
-        });
-        saveDirPath.subscribe(async (newVal:string) => {
-            await SettingsManager.updateSettings({
-                prop: $selectedGame == 1 ? "legacy1SaveDir": "legacy2SaveDir",
-                data: newVal
-            });
-        });
-        selectedTab.subscribe(async (newVal:string) => {
-            await SettingsManager.updateSettings({
-                prop: "selectedTab",
-                data: newVal
-            });
-        });
-
         await AppController.init();
         
         if ($saveDirPath != "") {
@@ -58,7 +46,7 @@
 <div data-tauri-drag-region class="titlebar">
     <div class="info">
         <img src="/logo.png" alt="logo" height="25" style="margin-left: 7px;">
-        <div style="margin-left: 10px; margin-right: 30px;">Rogue Legacy Save Editor</div>
+        <div style="margin-left: 10px; margin-right: 30px;">Editor v<b style="font-size: 18px; font-weight: normal;">{__APP_VERSION__}</b> - Editing Rogue Legacy <b style="font-size: 18px; font-weight: normal;">{$seriesEntry + 1}</b></div>
     </div>
     <div class="btns">
         <div bind:this="{minimize}" class="titlebar-button" id="titlebar-minimize">

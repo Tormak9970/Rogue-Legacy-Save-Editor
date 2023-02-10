@@ -1,3 +1,20 @@
+<!--
+ Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2.
+ Copyright (C) 2023 Travis Lane (Tormak)
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+ -->
 <script lang="ts">
 	import { SvelteToast } from "@zerodevx/svelte-toast";
     import Button from "./components/interactable/Button.svelte";
@@ -9,11 +26,11 @@
     
     import { discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, showConfirmDiscard, showConfirmReload } from "./Stores";
     import ProgressBar from "./components/info/ProgressBar.svelte";
-    import { ToasterController } from "./lib/controllers/ToasterController";
     import ConfirmModal from "./components/modals/ConfirmModal.svelte";
     import LoadBackupModal from "./components/modals/LoadBackupModal.svelte";
     import ReloadButton from "./components/interactable/ReloadButton.svelte";
     import AboutModal from "./components/modals/AboutModal.svelte";
+  import { onDestroy } from "svelte";
 
     $: dispAboutModal = false
 
@@ -35,6 +52,10 @@
     async function loadBackup(e:Event) { await AppController.loadBackups(); }
 
     function showAboutModal(e:Event) { dispAboutModal = true; }
+
+    function switchGameVersion(e:Event) { AppController.switchGameVersion(); }
+
+    onDestroy(() => AppController.onDestroy());
 </script>
 
 <main>
@@ -63,6 +84,8 @@
             <div class="bottom-wrapper">
                 <div class="rights">© Travis Lane 2023</div>
                 <div class="bottom-panel">
+                    <Button text={"Switch Game Version"} onClick={switchGameVersion} width={"140px"} />
+                    <div style="width: 7px; height: 1px;" />
                     <Button text={"About"} onClick={showAboutModal} width={"60px"} />
                     <div style="width: 7px; height: 1px;" />
                     <ReloadButton onClick={confirmReload} />

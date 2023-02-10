@@ -1,6 +1,6 @@
 <!--
- DarkestDungeon Save Editor is a tool for viewing and modifying DarkestDungeon game saves.
- Copyright (C) 2022 Travis Lane (Tormak)
+ Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2.
+ Copyright (C) 2023 Travis Lane (Tormak)
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -36,16 +36,13 @@
                 About
             </div>
             <div class="message">
-                Darkest Dungeon Save Editor is a tool for viewing and modifying game saves.<br/>
-                The file reading is based on an old save editor by robojumper<br/>
-                <!-- svelte-ignore a11y-invalid-attribute -->
-                (you can find it <a href="" on:click={() => { openLink("https://github.com/robojumper/DarkestDungeonSaveEditor/")}}>here</a>)
+                Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2
             </div>
             <div class="header">
                 Licensing
             </div>
             <div class="message">
-                Copyright (C) 2022 Travis Lane (Tormak)<br/>
+                Copyright (C) 2023 Travis Lane (Tormak)<br/>
                 <br/>
                 This program is free software: you can redistribute it and/or modify<br/>
                 it under the terms of the GNU General Public License as published by<br/>

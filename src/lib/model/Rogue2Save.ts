@@ -1,7 +1,16 @@
 import type { Reader } from "../utils/Reader";
+import type { SaveFile } from "./SaveFile";
 
-export class Rogue2Save {
-  constructor(reader: Reader) {}
+export class Rogue2Save implements SaveFile {
+  constructor(reader: Reader) {
+    
+  }
 
-  asJson() {}
+  asJson(): any {
+
+  }
+
+  asBinary(): void {
+      
+  }
 }
