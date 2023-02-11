@@ -20,11 +20,14 @@ import { isSaveFile } from "../utils/Utils";
 import { Rogue1Save } from "../model/Rogue1Save";
 import { SettingsManager } from "../utils/SettingsManager";
 import { SeriesVersion } from "../model/SeriesVersion";
+import { LogController } from "./LogController";
 
 /**
  * The main controller for the application
  */
 export class AppController {
+  private static logFilePath = "";
+  static logController = new LogController();
   static backupsController = new BackupsController();
 
   private static seriesEntrySub:Unsubscriber;
@@ -82,11 +85,13 @@ export class AppController {
    * Sets up the app
    */
   static async init(): Promise<void> {
+    AppController.logFilePath = await path.appDataDir() //join log directory here
+    AppController.logController.setFilePath(AppController.logFilePath)
     const appDir = get(appDataDir);
     const backupPath = await path.join(appDir, "backups");
 
     if (!(await fs.exists(backupPath))) await fs.createDir(backupPath);
-    this.backupsController.setBackupDir(backupPath);
+    AppController.backupsController.setBackupDir(backupPath);
   }
 
   static switchGameVersion(): void {

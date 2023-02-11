@@ -15,22 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>
  */
-:root {
-    --font-color: rgb(231, 231, 231);
-    --background: #1a1a1a;
-    --background-hover: #1f1f1f;
-    --foreground: #252525;
-    --hover: #303030;
 
-    --highlight: #227AFF;
-    --highlight-hover: #22aeff;
-    --warning: #e24a4a;
-    --warning-hover: #e13525;
+/**
+ * Controller that handles all logging done by the app.
+ */
+export class LogController {
+  private logPath:string;
 
-    --selection-color: #3891ff7a;
+  setFilePath(logPath:string): void {
+    this.logPath = logPath;
+  }
 
-    --success: #36ff04;
+  log(message:string) {
 
-    /* Toast variables */
-    --toastContainerTop: 2.5rem;
+  }
+
+  warn(message:string) {
+
+  }
+
+  error(message:string) {
+
+  }
 }
