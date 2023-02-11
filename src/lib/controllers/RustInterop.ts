@@ -16,31 +16,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>
  */
 
-import { LogLevel, RustInterop } from "./RustInterop";
+import { invoke } from "@tauri-apps/api";
+
+export enum LogLevel {
+  INFO,
+  WARN,
+  ERROR
+}
 
 /**
- * Controller that handles all logging done by the app.
+ * Handles wrapping ipc communication into an easy to use JS bindings.
  */
-export class LogController {
-  private logPath:string;
-
-  setFilePath(logPath:string): void {
-    this.logPath = logPath;
+export class RustInterop {
+  static async cleanOutLog(logPath:string):Promise<void> {
+    await invoke("clean_out_log", {logPath: logPath});
   }
 
-  async cleanLogFile(): Promise<void> {
-    await RustInterop.cleanOutLog(this.logPath);
-  }
-
-  async log(message:string): Promise<void> {
-    await RustInterop.logToFile(message, LogLevel.INFO, this.logPath);
-  }
-
-  async warn(message:string): Promise<void> {
-    await RustInterop.logToFile(message, LogLevel.WARN, this.logPath);
-  }
-
-  async error(message:string): Promise<void> {
-    await RustInterop.logToFile(message, LogLevel.ERROR, this.logPath);
+  static async logToFile(message: string, level:LogLevel, logPath:string):Promise<void> {
+    await invoke("log_to_file", {message: message, level: level, logPath: logPath});
   }
 }

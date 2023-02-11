@@ -21,7 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>
  */
 
-use std::fs::{File, OpenOptions};
+use std::fs::{File, OpenOptions, create_dir_all};
 use std::path::Path;
 use std::io::prelude::*;
 use chrono::prelude::*;
@@ -29,36 +29,46 @@ use chrono::prelude::*;
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn log_to_file(message: String, level:u8, log_path:String) {
-  let mut log_file:File;
-
-  let exists:bool = Path::new(&log_path).exists();
-
-  if exists {
-    log_file = File::create(log_path).expect("Encountered an issue when creating the log file.");
-  } else {
-    log_file = OpenOptions::new()
-      .write(true)
-      .append(true)
-      .open(log_path)
-      .unwrap();
-  }
+  let mut log_file: File = OpenOptions::new()
+    .create(true)
+    .write(true)
+    .append(true)
+    .open(&log_path)
+    .unwrap();
   
   let level_name = if level == 0 {"INFO"} else if level == 1 {"WARNING"} else {"ERROR"};
 
   let now: DateTime<Local> = Local::now();
-  let hour = now.hour();
-  let min = now.minute();
-  let sec = now.second();
+  let hour: u32 = now.hour();
+  let min: u32 = now.minute();
+  let sec: u32 = now.second();
 
   if let Err(e) = writeln!(log_file, "[Rogue Legacy Editor] [{hour}:{min}:{sec}] [{level_name}]: {message}") {
     eprintln!("Couldn't write to file: {}", e);
   }
 }
 
+#[tauri::command]
+fn clean_out_log(log_path:String) {
+  let parent = Path::new(&log_path).parent().unwrap().as_os_str().to_str().unwrap();
+  create_dir_all(parent).expect("Failed to make directory");
+
+  let log_file: File = OpenOptions::new()
+    .create(true)
+    .truncate(true)
+    .write(true)
+    .open(&log_path)
+    .unwrap();
+
+  drop(log_file);
+
+  log_to_file(String::from("Initialized logging file"), 0, log_path);
+}
+
 fn main() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_persisted_scope::init())
-        .invoke_handler(tauri::generate_handler![log_to_file])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+  tauri::Builder::default()
+    .plugin(tauri_plugin_persisted_scope::init())
+    .invoke_handler(tauri::generate_handler![clean_out_log, log_to_file])
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
 }

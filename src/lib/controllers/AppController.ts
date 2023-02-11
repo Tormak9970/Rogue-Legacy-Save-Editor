@@ -85,8 +85,12 @@ export class AppController {
    * Sets up the app
    */
   static async init(): Promise<void> {
-    AppController.logFilePath = await path.appDataDir() //join log directory here
-    AppController.logController.setFilePath(AppController.logFilePath)
+    const logDir = await path.join(await path.appDataDir(), "logs");
+
+    AppController.logFilePath = await path.join(logDir, "rogue-legacy-editor.log");
+    AppController.logController.setFilePath(AppController.logFilePath);
+    await AppController.logController.cleanLogFile();
+
     const appDir = get(appDataDir);
     const backupPath = await path.join(appDir, "backups");
 
