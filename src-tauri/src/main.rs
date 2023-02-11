@@ -1,6 +1,6 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+  all(not(debug_assertions), target_os = "windows"),
+  windows_subsystem = "windows"
 )]
 
 /**
@@ -21,10 +21,38 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>
  */
 
+use std::fs::{File, OpenOptions};
+use std::path::Path;
+use std::io::prelude::*;
+use chrono::prelude::*;
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn log_to_file(message: String) {
-  println!("{}", message);
+fn log_to_file(message: String, level:u8, log_path:String) {
+  let mut log_file:File;
+
+  let exists:bool = Path::new(&log_path).exists();
+
+  if exists {
+    log_file = File::create(log_path).expect("Encountered an issue when creating the log file.");
+  } else {
+    log_file = OpenOptions::new()
+      .write(true)
+      .append(true)
+      .open(log_path)
+      .unwrap();
+  }
+  
+  let level_name = if level == 0 {"INFO"} else if level == 1 {"WARNING"} else {"ERROR"};
+
+  let now: DateTime<Local> = Local::now();
+  let hour = now.hour();
+  let min = now.minute();
+  let sec = now.second();
+
+  if let Err(e) = writeln!(log_file, "[Rogue Legacy Editor] [{hour}:{min}:{sec}] [{level_name}]: {message}") {
+    eprintln!("Couldn't write to file: {}", e);
+  }
 }
 
 fn main() {

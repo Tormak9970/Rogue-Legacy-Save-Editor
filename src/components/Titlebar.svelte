@@ -45,8 +45,8 @@
 
 <div data-tauri-drag-region class="titlebar">
     <div class="info">
-        <img src="/logo.svg" alt="logo" height="25" style="margin-left: 7px;">
-        <div style="margin-left: 10px; margin-right: 30px;">Editor v<b style="font-size: 18px; font-weight: normal;">{__APP_VERSION__}</b> - Editing Rogue Legacy <b style="font-size: 18px; font-weight: normal;">{$seriesEntry + 1}</b></div>
+        <img src="/logo.svg" alt="logo" height="20" style="margin-left: 7px;">
+        <div style="margin-left: 8px; margin-right: 30px;">Editor v<b style="font-size: 18px; font-weight: normal;">{__APP_VERSION__}</b> - Editing Rogue Legacy <b style="font-size: 18px; font-weight: normal;">{$seriesEntry + 1}</b></div>
     </div>
     <div class="btns">
         <div bind:this="{minimize}" class="titlebar-button" id="titlebar-minimize">
