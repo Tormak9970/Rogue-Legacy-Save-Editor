@@ -98,8 +98,12 @@ export class AppController {
     AppController.backupsController.setBackupDir(backupPath);
   }
 
-  static switchGameVersion(): void {
-
+  /**
+   * Switches the game version from 1 to 2 and vise versa.
+   */
+  static async switchGameVersion(): Promise<void> {
+    seriesEntry.update((value) => value == SeriesVersion.ROGUE_LEGACY_ONE ? SeriesVersion.ROGUE_LEGACY_TWO : SeriesVersion.ROGUE_LEGACY_ONE);
+    await SettingsManager.updateSettings({prop: "seriesEntry", data: get(seriesEntry)});
   }
 
   /**
@@ -155,14 +159,34 @@ export class AppController {
    * Load up the existing backups
    */
   static async loadBackups(): Promise<void> {
-
+    await AppController.backupsController.showBackupsModal();
   }
 
   /**
    * Saves the current changes
    */
   static async saveChanges(): Promise<void> {
+    // const revision = Object.values(get(dsonFiles))[0].header.revision;
+    // const changes = Object.entries(get(tabs));
+    // const cTabs = get(changedTabs);
 
+    // // TODO only write files with changes
+    // for (let i = 0; i < changes.length; i++) {
+    //   const fileName = changes[i][0];
+
+    //   if (cTabs[fileName]) {
+    //     const filePath = await path.join(get(saveDirPath), fileName);
+    //     const newData = changes[i][1];
+
+    //     const dWriter = new DsonWriter(newData as any, revision);
+    //     const dataBuf = dWriter.bytes();
+
+    //     await fs.writeBinaryFile(filePath, dataBuf);
+    //   }
+    // }
+
+    // discardChangesDisabled.set(true);
+    // saveChangesDisabled.set(true);
   }
 
   /**
@@ -189,6 +213,9 @@ export class AppController {
     await AppController.loadSaves();
   }
 
+  /**
+   * Function run on app closing/refreshing.
+   */
   static onDestroy(): void {
     if (AppController.seriesEntrySub) AppController.seriesEntrySub();
     if (AppController.gameVersionSub) AppController.gameVersionSub();
