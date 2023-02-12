@@ -1,11 +1,11 @@
 import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
-import { SeriesVersion } from "./lib/model/SeriesVersion";
+import { SeriesEntry } from "./lib/model/SeriesEntry";
 import type { SaveFile } from "./lib/model/SaveFile";
 
 export const appDataDir = writable("");
 export const saveDirPath = writable("");
-export const seriesEntry = writable(SeriesVersion.ROGUE_LEGACY_ONE);
+export const seriesEntry = writable(SeriesEntry.ROGUE_LEGACY_ONE);
 export const gameVersion = writable("");
 
 export const unchangedTabs: Writable<{ [key: string]: object }> = writable({});

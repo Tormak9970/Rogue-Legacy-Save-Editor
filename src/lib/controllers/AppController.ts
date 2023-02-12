@@ -17,10 +17,16 @@ import { Reader } from "../utils/Reader";
 import { BackupsController } from "./BackupsController";
 import { ToasterController } from "./ToasterController";
 import { isSaveFile } from "../utils/Utils";
-import { Rogue1Save } from "../model/Rogue1Save";
 import { SettingsManager } from "../utils/SettingsManager";
-import { SeriesVersion } from "../model/SeriesVersion";
+import { SeriesEntry } from "../model/SeriesEntry";
 import { LogController } from "./LogController";
+import type { SaveFile } from "../model/SaveFile";
+import { RogueOneSaveFileNames } from "../model/SaveFileNames";
+import { Rogue1Player } from "../model/rogue-one-formats/RogueLegacyPlayer";
+import { Rogue1BP } from "../model/rogue-one-formats/RogueLegacyBP";
+import { Rogue1Lineage } from "../model/rogue-one-formats/RogueLegacyLineage";
+import { Rogue1Map } from "../model/rogue-one-formats/RogueLegacyMap";
+import { Rogue1MapDat } from "../model/rogue-one-formats/RogueLegacyMapDat";
 
 /**
  * The main controller for the application
@@ -41,8 +47,8 @@ export class AppController {
 
     appDataDir.set(settings.appDataDir == "" ? (await path.appConfigDir()) : settings.appDataDir);
     seriesEntry.set(settings.seriesEntry);
-    saveDirPath.set(settings.seriesEntry === SeriesVersion.ROGUE_LEGACY_ONE ? settings.legacy1SaveDir : settings.legacy2SaveDir);
-    gameVersion.set(settings.seriesEntry === SeriesVersion.ROGUE_LEGACY_ONE ? settings.legacy1Version : settings.legacy2Version);
+    saveDirPath.set(settings.seriesEntry === SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1SaveDir : settings.legacy2SaveDir);
+    gameVersion.set(settings.seriesEntry === SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1Version : settings.legacy2Version);
 
     if (!AppController.seriesEntrySub) {
       AppController.seriesEntrySub = seriesEntry.subscribe(async (newVal:number) => {
@@ -56,7 +62,7 @@ export class AppController {
     if (!AppController.gameVersionSub) {
       AppController.gameVersionSub = gameVersion.subscribe(async (newVal:string) => {
         await SettingsManager.updateSettings({
-            prop: get(seriesEntry) === SeriesVersion.ROGUE_LEGACY_ONE ? "legacy1Version": "legacy2Version",
+            prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1Version": "legacy2Version",
             data: newVal
         });
       });
@@ -65,7 +71,7 @@ export class AppController {
     if (!AppController.saveDirPathSub) {
       AppController.saveDirPathSub = saveDirPath.subscribe(async (newVal:string) => {
         await SettingsManager.updateSettings({
-            prop: get(seriesEntry) === SeriesVersion.ROGUE_LEGACY_ONE ? "legacy1SaveDir": "legacy2SaveDir",
+            prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1SaveDir": "legacy2SaveDir",
             data: newVal
         });
       });
@@ -102,7 +108,7 @@ export class AppController {
    * Switches the game version from 1 to 2 and vise versa.
    */
   static async switchGameVersion(): Promise<void> {
-    seriesEntry.update((value) => value == SeriesVersion.ROGUE_LEGACY_ONE ? SeriesVersion.ROGUE_LEGACY_TWO : SeriesVersion.ROGUE_LEGACY_ONE);
+    seriesEntry.update((value) => value == SeriesEntry.ROGUE_LEGACY_ONE ? SeriesEntry.ROGUE_LEGACY_TWO : SeriesEntry.ROGUE_LEGACY_ONE);
     await SettingsManager.updateSettings({prop: "seriesEntry", data: get(seriesEntry)});
   }
 
@@ -112,40 +118,63 @@ export class AppController {
   static async loadSaves(): Promise<void> {
     const saveDir = get(saveDirPath);
 
-    // const newTabs = {};
-    // const newSaveFiles = {};
-    // const wasChanged = {};
-    // if (saveDir != "") {
-    //   const loaderId = ToasterController.showLoaderToast("Loading save data");
-    //   const saveConts = await fs.readDir(saveDir);
+    const newTabs = {};
+    const newSaveFiles = {};
+    const wasChanged = {};
+    if (saveDir != "") {
+      const loaderId = ToasterController.showLoaderToast("Loading save data");
+      const saveConts = await fs.readDir(saveDir);
 
-    //   for (let i = 0; i < saveConts.length; i++) {
-    //     const saveFilePath = saveConts[i];
+      if (get(seriesEntry) == SeriesEntry.ROGUE_LEGACY_ONE) {
+        for (let i = 0; i < saveConts.length; i++) {
+          const saveFilePath = saveConts[i];
+  
+          if (isSaveFile(saveFilePath.name)) {
+            const data = await fs.readBinaryFile(saveFilePath.path);
+            const reader = new Reader(data);
+            let save: SaveFile; //! need to make this alternate between 1 and 2
 
-    //     if (isSaveFile(saveFilePath.name)) {
-    //       const data = await fs.readBinaryFile(saveFilePath.path);
-    //       const reader = new Reader(data);
-    //       const save = new Rogue1Save(reader); //! need to make this alternate between 1 and 2
+            switch (saveFilePath.name) {
+              case RogueOneSaveFileNames.BP:
+                save = new Rogue1BP(reader);
+                break;
+              case RogueOneSaveFileNames.PLAYER:
+                save = new Rogue1Player(reader);
+                break;
+              case RogueOneSaveFileNames.LINEAGE:
+                save = new Rogue1Lineage(reader);
+                break;
+              case RogueOneSaveFileNames.MAP:
+                save = new Rogue1Map(reader);
+                break;
+              case RogueOneSaveFileNames.MAP_DAT:
+                save = new Rogue1MapDat(reader);
+                break;
+            }
+  
+            newTabs[saveFilePath.name] = save.asJson();
+            newSaveFiles[saveFilePath.name] = save;
+            wasChanged[saveFilePath.name] = false;
+          }
+        }
+      } else {
 
-    //       newTabs[saveFilePath.name] = save.asJson();
-    //       newSaveFiles[saveFilePath.name] = save;
-    //       wasChanged[saveFilePath.name] = false;
-    //     }
-    //   }
-    //   ToasterController.remLoaderToast(loaderId);
+      }
 
-    //   setTimeout(() => {
-    //     ToasterController.showSuccessToast("Saves loaded!");
-    //   }, 500);
-    // }
+      ToasterController.remLoaderToast(loaderId);
 
-    // unchangedTabs.set(JSON.parse(JSON.stringify(newTabs)));
-    // changedTabs.set(wasChanged);
-    // tabs.set(newTabs);
-    // saveFiles.set(newSaveFiles);
+      setTimeout(() => {
+        ToasterController.showSuccessToast("Saves loaded!");
+      }, 500);
+    }
 
-    // discardChangesDisabled.set(true);
-    // saveChangesDisabled.set(true);
+    unchangedTabs.set(JSON.parse(JSON.stringify(newTabs)));
+    changedTabs.set(wasChanged);
+    tabs.set(newTabs);
+    saveFiles.set(newSaveFiles);
+
+    discardChangesDisabled.set(true);
+    saveChangesDisabled.set(true);
   }
 
   /**
