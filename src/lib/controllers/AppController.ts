@@ -25,8 +25,6 @@ import { RogueOneSaveFileNames } from "../model/SaveFileNames";
 import { Rogue1Player } from "../model/rogue-one-formats/RogueLegacyPlayer";
 import { Rogue1BP } from "../model/rogue-one-formats/RogueLegacyBP";
 import { Rogue1Lineage } from "../model/rogue-one-formats/RogueLegacyLineage";
-import { Rogue1Map } from "../model/rogue-one-formats/RogueLegacyMap";
-import { Rogue1MapDat } from "../model/rogue-one-formats/RogueLegacyMapDat";
 
 /**
  * The main controller for the application
@@ -143,12 +141,6 @@ export class AppController {
                 break;
               case RogueOneSaveFileNames.LINEAGE:
                 save = new Rogue1Lineage(reader);
-                break;
-              case RogueOneSaveFileNames.MAP:
-                save = new Rogue1Map(reader);
-                break;
-              case RogueOneSaveFileNames.MAP_DAT:
-                save = new Rogue1MapDat(reader);
                 break;
             }
   

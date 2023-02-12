@@ -1,9 +1,7 @@
 export enum RogueOneSaveFileNames {
   PLAYER = "RogueLegacyPlayer.rcdat",
   LINEAGE = "RogueLegacyLineage.rcdat",
-  BP = "RogueLegacyBP.rcdat",
-  MAP = "RogueLegacyMap.rcdat",
-  MAP_DAT = "RogueLegacyMapDat.rcdat"
+  BP = "RogueLegacyBP.rcdat"
 }
 
 export enum RogueTwoSaveFileNames {
