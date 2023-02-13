@@ -137,38 +137,37 @@ export const Runes = {
   "10": "Balance"
 }
 
-// enum SkillType
-// {
-// 	Health_Up,max
-// 	Invuln_Time_Up,max
-// 	Death_Dodge,max
-// 	Attack_Up,max
-// 	Down_Strike_Up,max
-// 	Crit_Chance_Up,max
-// 	Crit_Damage_Up,max
-// 	Magic_Damage_Up,max
-// 	Mana_Up,max
-// 	Mana_Cost_Down,max
-// 	Smithy,max
-// 	Enchanter,max
-// 	Architect,max
-// 	Equip_Up,max
-// 	Armor_Up,max
-// 	Gold_Gain_Up,max
-// 	Prices_Down,max
-// 	Potion_Up,max
-// 	Randomize_Children,max
-// 	Lich_Unlock,max
-// 	Banker_Unlock,max
-// 	Spellsword_Unlock,max
-// 	Ninja_Unlock,max
-// 	Knight_Up,max
-// 	Mage_Up,max
-// 	Assassin_Up,max
-// 	Banker_Up,max
-// 	Barbarian_Up,max
-// 	Lich_Up,max
-// 	Ninja_Up,max
-// 	SpellSword_Up,max
-// 	SuperSecret
-// }
+export const SkillType = {
+	"0": "Health_Up",
+	"1": "Invuln_Time_Up",
+	"2": "Death_Dodge",
+	"3": "Attack_Up",
+	"4": "Down_Strike_Up",
+	"5": "Crit_Chance_Up",
+	"6": "Crit_Damage_Up",
+	"7": "Magic_Damage_Up",
+	"8": "Mana_Up",
+	"9": "Mana_Cost_Down",
+	"10": "Smithy",
+	"11": "Enchanter",
+	"12": "Architect",
+	"13": "Equip_Up",
+	"14": "Armor_Up",
+	"15": "Gold_Gain_Up",
+	"16": "Prices_Down",
+	"17": "Potion_Up",
+	"18": "Randomize_Children",
+	"19": "Lich_Unlock",
+	"20": "Banker_Unlock",
+	"21": "Spellsword_Unlock",
+	"22": "Ninja_Unlock",
+	"23": "Knight_Up",
+	"24": "Mage_Up",
+	"25": "Assassin_Up",
+	"26": "Banker_Up",
+	"27": "Barbarian_Up",
+	"28": "Lich_Up",
+	"29": "Ninja_Up",
+	"30": "SpellSword_Up",
+	"31": "SuperSecret",
+}

@@ -1,7 +1,7 @@
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
 import type { SaveFile } from "../SaveFile";
-import { EquipmentState, GearLevels, Runes } from "./RogueOneLUTs";
+import { EquipmentState, GearLevels, Runes, SkillType } from "./RogueOneLUTs";
 
 /**
  * Class representing the ROgueLegacyBP.rcdat save file.
@@ -39,7 +39,7 @@ export class Rogue1BP implements SaveFile {
     "cape": "None"
   }
 
-  manorSkillLevels:number[]; //[32]
+  manorSkillLevels:{[key:string]: boolean};
 
   constructor(reader?: Reader) {
     if (reader) this.parseFile(reader);
@@ -76,9 +76,9 @@ export class Rogue1BP implements SaveFile {
     this.equppedRunes.limbs = Runes[reader.readInt8()];
     this.equppedRunes.cape = Runes[reader.readInt8()];
 
-    this.manorSkillLevels = [];
+    this.manorSkillLevels = {};
     for (let i = 0; i < 32; i++) {
-      this.manorSkillLevels.push(reader.readInt32());
+      this.manorSkillLevels[SkillType[i]] = reader.readInt32() == 1;
     }
 
     console.log(this.asJson());
