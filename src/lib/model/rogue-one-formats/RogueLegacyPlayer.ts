@@ -12,7 +12,7 @@ export class Rogue1Player implements SaveFile {
   childAge:number;
 
   spell:string; //SpellType
-  class:string; //ClassType
+  classType:string; //ClassType
   specialItem:string; //SpecialItem
   trait:[string, string]; //Trait
 
@@ -89,7 +89,7 @@ export class Rogue1Player implements SaveFile {
     this.age = reader.readUint8();
     this.childAge = reader.readInt8();
     this.spell = SpellType[reader.readInt8().toString()];
-    this.class = ClassType[reader.readInt8().toString()];
+    this.classType = ClassType[reader.readInt8().toString()];
     this.specialItem = SpecialItem[reader.readInt8().toString()];
     this.trait = [ Traits[reader.readInt8().toString()], Traits[reader.readInt8().toString()] ];
 
@@ -183,7 +183,7 @@ export class Rogue1Player implements SaveFile {
       "age": this.age,
       "childAge": this.childAge,
       "spell": this.spell,
-      "class": this.class,
+      "classType": this.classType,
       "specialItem": this.specialItem,
       "trait": this.trait,
 
@@ -253,6 +253,14 @@ export class Rogue1Player implements SaveFile {
   }
 
   fromJson(json:any) {
-    
+    const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function");
+
+    for (const key of keys) {
+      if (json[key]) {
+        this[key] = json[key];
+      } else {
+        AppController.log(`Can't run Payer.fromJson(). Missing key ${key} in json.`);
+      }
+    }
   }
 }
