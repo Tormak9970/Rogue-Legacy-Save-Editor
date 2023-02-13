@@ -25,6 +25,7 @@ import { RogueOneSaveFileNames } from "../model/SaveFileNames";
 import { Rogue1Player } from "../model/rogue-one-formats/RogueLegacyPlayer";
 import { Rogue1BP } from "../model/rogue-one-formats/RogueLegacyBP";
 import { Rogue1Lineage } from "../model/rogue-one-formats/RogueLegacyLineage";
+import { LogLevel } from "./RustInterop";
 
 /**
  * The main controller for the application
@@ -130,7 +131,7 @@ export class AppController {
           if (isSaveFile(saveFilePath.name)) {
             const data = await fs.readBinaryFile(saveFilePath.path);
             const reader = new Reader(data);
-            let save: SaveFile; //! need to make this alternate between 1 and 2
+            let save: SaveFile;
 
             switch (saveFilePath.name) {
               case RogueOneSaveFileNames.BP:
@@ -144,9 +145,11 @@ export class AppController {
                 break;
             }
   
-            newTabs[saveFilePath.name] = save.asJson();
-            newSaveFiles[saveFilePath.name] = save;
-            wasChanged[saveFilePath.name] = false;
+            if (save) {
+              newTabs[saveFilePath.name] = save.asJson();
+              newSaveFiles[saveFilePath.name] = save;
+              wasChanged[saveFilePath.name] = false;
+            }
           }
         }
       } else {
@@ -233,6 +236,24 @@ export class AppController {
   static async reload(): Promise<void> {
     await AppController.loadSaves();
   }
+
+  /**
+   * Logs a message with level [INFO] to the app's log file.
+   * @param message Message to log.
+   */
+  static log(message:string) { AppController.logController.log(message); }
+  
+  /**
+   * Logs a message with level [WARNING] to the app's log file.
+   * @param message Message to log.
+   */
+  static warn(message:string) { AppController.logController.warn(message); }
+  
+  /**
+   * Logs a message with level [ERROR] to the app's log file.
+   * @param message Message to log.
+   */
+  static error(message:string) { AppController.logController.error(message); }
 
   /**
    * Function run on app closing/refreshing.

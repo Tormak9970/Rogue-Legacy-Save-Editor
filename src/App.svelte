@@ -24,14 +24,16 @@
 	import Titlebar from "./components/Titlebar.svelte";
     import { AppController } from "./lib/controllers/AppController";
     
-    import { discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, showConfirmDiscard, showConfirmReload } from "./Stores";
+    import { discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, seriesEntry, showConfirmDiscard, showConfirmReload } from "./Stores";
     import ProgressBar from "./components/info/ProgressBar.svelte";
     import ConfirmModal from "./components/modals/ConfirmModal.svelte";
     import LoadBackupModal from "./components/modals/LoadBackupModal.svelte";
     import ReloadButton from "./components/interactable/ReloadButton.svelte";
     import AboutModal from "./components/modals/AboutModal.svelte";
-  import { onDestroy } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+    import { getDefaultSaveDirectory } from "./lib/utils/Utils";
 
+    let defaultSavePath:string = $saveDirPath;
     $: dispAboutModal = false
 
     async function loadSave(e:Event) {
@@ -55,6 +57,12 @@
 
     function switchGameVersion(e:Event) { AppController.switchGameVersion(); }
 
+    onMount(async () => {
+        if ($saveDirPath == "") {
+            defaultSavePath = await getDefaultSaveDirectory($seriesEntry);
+        }
+    });
+
     onDestroy(() => AppController.onDestroy());
 </script>
 
@@ -67,12 +75,12 @@
 	<div class="content">
         <Pane title="Paths" width={"calc(100% - 34px)"}>
             <div class="row" style="margin-top: 0px;">
-                <PathField fieldName="Save Directory" title={"Select a save directory"} defaultPath={$saveDirPath} cVal={$saveDirPath} handler={loadSave} />
+                <PathField fieldName="Save Directory" title={"Select a save directory"} defaultPath={defaultSavePath} cVal={$saveDirPath} handler={loadSave} />
                 <div style="height: 1px; width: 7px;" />
                 <Button text={"Make Backup"} onClick={makeBackup} width={"100px"} />
             </div>
             <div class="row">
-                <PathField fieldName="Game Data" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
+                <PathField fieldName="Placeholder" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
                 <div style="height: 1px; width: 7px;" />
                 <Button text={"Load Backup"} onClick={loadBackup} width={"100px"} />
             </div>

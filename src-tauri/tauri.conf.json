@@ -14,6 +14,7 @@
     "allowlist": {
       "dialog": { "all": true },
       "path": { "all": true },
+      "os": { "all": true },
       "fs": {
         "all": true,
         "scope": [
