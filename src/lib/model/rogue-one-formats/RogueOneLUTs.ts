@@ -104,6 +104,7 @@ export const EquipmentState = {
 };
 
 export const GearLevels = {
+  "-1": "None",
   "0": "Squire",
   "1": "Silver",
   "2": "Guardian",
@@ -121,19 +122,19 @@ export const GearLevels = {
   "14": "Dark",
 }
 
-// ! not verified the order
 export const Runes = {
-  "0": "Sprint",
-  "1": "Vault",
-  "2": "Bounty",
-  "3": "Siphon",
-  "4": "Retaliation",
-  "5": "Grace",
-  "6": "Balance",
-  "7": "Curse",
-  "8": "Vampire",
-  "9": "Sky",
-  "10": "Haste"
+  "-1": "None",
+  "0": "Vault",
+  "1": "Sprint",
+  "2": "Vampire",
+  "3": "Sky",
+  "4": "Siphon",
+  "5": "Retaliation",
+  "6": "Bounty",
+  "7": "Haste",
+  "8": "Curse",
+  "9": "Grace",
+  "10": "Balance"
 }
 
 // enum SkillType

@@ -14,6 +14,7 @@ export class Rogue1BP implements SaveFile {
     "limbs": {},
     "cape": {}
   };
+  
   runes = {
     "sword": {},
     "helm": {},
@@ -22,12 +23,23 @@ export class Rogue1BP implements SaveFile {
     "cape": {}
   };
 
-  // Sword, Helm, Chest, Limb, Cape
-  equippedArmor:number[]; //[5]
+  equippedArmor = {
+    "sword": "None",
+    "helm": "None",
+    "chest": "None",
+    "limbs": "None",
+    "cape": "None"
+  };
 
-  equppedRunes:number[]; //[5]
+  equppedRunes = {
+    "sword": "None",
+    "helm": "None",
+    "chest": "None",
+    "limbs": "None",
+    "cape": "None"
+  }
 
-  manorSkillLevels:string[]; //[32]
+  manorSkillLevels:number[]; //[32]
 
   constructor(reader?: Reader) {
     if (reader) this.parseFile(reader);
@@ -51,6 +63,23 @@ export class Rogue1BP implements SaveFile {
     for (let i = 0; i < 11; i++) this.runes.chest[Runes[i]] = EquipmentState[reader.readInt8()];
     for (let i = 0; i < 11; i++) this.runes.limbs[Runes[i]] = EquipmentState[reader.readInt8()];
     for (let i = 0; i < 11; i++) this.runes.cape[Runes[i]] = EquipmentState[reader.readInt8()];
+
+    this.equippedArmor.sword = GearLevels[reader.readInt8()];
+    this.equippedArmor.helm = GearLevels[reader.readInt8()];
+    this.equippedArmor.chest = GearLevels[reader.readInt8()];
+    this.equippedArmor.limbs = GearLevels[reader.readInt8()];
+    this.equippedArmor.cape = GearLevels[reader.readInt8()];
+
+    this.equppedRunes.sword = Runes[reader.readInt8()];
+    this.equppedRunes.helm = Runes[reader.readInt8()];
+    this.equppedRunes.chest = Runes[reader.readInt8()];
+    this.equppedRunes.limbs = Runes[reader.readInt8()];
+    this.equppedRunes.cape = Runes[reader.readInt8()];
+
+    this.manorSkillLevels = [];
+    for (let i = 0; i < 32; i++) {
+      this.manorSkillLevels.push(reader.readInt32());
+    }
 
     console.log(this.asJson());
     // AppController.log("Finished writing RogueLegacyBP.rcdat");
