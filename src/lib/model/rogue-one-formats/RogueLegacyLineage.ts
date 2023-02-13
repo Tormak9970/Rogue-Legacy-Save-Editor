@@ -1,8 +1,29 @@
+/**
+ * Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2.
+ * Copyright (C) 2023 Travis Lane (Tormak)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>
+ */
+
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
 import type { SaveFile } from "../SaveFile";
 import { ClassType, SpellType, Traits } from "./RogueOneLUTs";
 
+/**
+ * Class representing the RogueLegacyLineage.rcdat save file.
+ */
 export class Rogue1Lineage implements SaveFile {
   numCurrentBranch:number;
   branch:Rogue1PlayerLineageData[]; //[numCurrentBranch]
@@ -14,7 +35,13 @@ export class Rogue1Lineage implements SaveFile {
     if (reader) this.parseFile(reader);
   }
 
+  /**
+   * Reads the Lineage data from the provided reader.
+   * @param reader The reader to use.
+   */
   parseFile(reader:Reader): void {
+    AppController.log("Started reading RogueLegacyLineage.rcdat");
+
     this.numCurrentBranch = reader.readInt32();
     this.branch = [];
     for (let i = 0; i < this.numCurrentBranch; i++) {
@@ -27,10 +54,14 @@ export class Rogue1Lineage implements SaveFile {
       const shoulderPiece = reader.readInt8();
       const age = reader.readInt8();
       const childAge = reader.readInt8();
+
+      const traitA = reader.readInt8();
+      const traitB = reader.readInt8();
       const trait:[string, string] = [
-        Traits[reader.readInt8()],
-        Traits[reader.readInt8()]
+        Traits[traitA],
+        Traits[traitB]
       ];
+
       const isFemale = reader.readInt8() == 1;
 
       const generationLength = reader.readInt8();
@@ -52,9 +83,12 @@ export class Rogue1Lineage implements SaveFile {
       const shoulderPiece = reader.readInt8();
       const numEnemiesBeaten = reader.readInt32();
       const beatenABoss = reader.readInt8() == 1;
+
+      const traitA = reader.readInt8();
+      const traitB = reader.readInt8();
       const trait:[string, string] = [
-        Traits[reader.readInt8()],
-        Traits[reader.readInt8()]
+        Traits[traitA],
+        Traits[traitB]
       ];
       const isFemale = reader.readInt8() == 1;
       
@@ -65,9 +99,13 @@ export class Rogue1Lineage implements SaveFile {
       this.lineage.push(new Rogue1FamilyTreeNode(nameLength, name, age, classType, headPiece, chestPiece, shoulderPiece, numEnemiesBeaten, beatenABoss, trait, isFemale, generationLength, generationText));
     }
 
-    console.log(this.asJson());
+    AppController.log("Finished reading RogueLegacyLineage.rcdat");
   }
 
+  /**
+   * Gets the json representation of this Rogue1Lineage.
+   * @returns The json representation of this Rogue1Lineage.
+   */
   asJson(): any {
     return {
       "numCurrentBranch": this.numCurrentBranch,
@@ -77,10 +115,20 @@ export class Rogue1Lineage implements SaveFile {
     };
   }
 
-  asBinary(): void {
-      
+  /**
+   * Gets the binary representation of this Rogue1Lineage.
+   * @returns The binary representation of this Rogue1Lineage.
+   */
+  asBinary(): ArrayBuffer {
+    // AppController.log("Started writing RogueLegacyLineage buffer.");
+    // AppController.log("Finished writing RogueLegacyLineage buffer.");
+    return null;
   }
 
+  /**
+   * Sets this Rogue1Lineage based on the provided json data.
+   * @param json The json data to use.
+   */
   fromJson(json:any) {
     const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function");
 
@@ -99,6 +147,7 @@ export class Rogue1Lineage implements SaveFile {
         }
       } else {
         AppController.log(`Can't run Lineage.fromJson(). Missing key ${key} in json.`);
+        break;
       }
     }
   }

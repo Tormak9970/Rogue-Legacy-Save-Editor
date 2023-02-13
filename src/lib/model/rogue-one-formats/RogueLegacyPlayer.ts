@@ -1,9 +1,29 @@
+/**
+ * Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2.
+ * Copyright (C) 2023 Travis Lane (Tormak)
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>
+ */
+
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
 import type { SaveFile } from "../SaveFile";
 import { ClassType, SpecialItem, SpellType, Traits } from "./RogueOneLUTs";
 
-
+/**
+ * Class representing the RogueLegacyPlayer.rcdat save file.
+ */
 export class Rogue1Player implements SaveFile {
   gold:number;
   currentHealth:number;
@@ -19,9 +39,9 @@ export class Rogue1Player implements SaveFile {
   private nameLength:number;
   name:string;
 
-  headPiece:number;
-  shoulderPiece:number;
-  chestPiece:number;
+  headPiece:number; //helm
+  shoulderPiece:number; //chest
+  chestPiece:number; //limbs
   diaryEntry:number;
 
   bonusHealth:number;
@@ -81,7 +101,13 @@ export class Rogue1Player implements SaveFile {
     if (reader) this.parseFile(reader);
   }
 
+  /**
+   * Reads the Player data from the provided reader.
+   * @param reader The reader to use.
+   */
   parseFile(reader:Reader): void {
+    AppController.log("Started reading RogueLegacyPlayer.rcdat");
+
     this.gold = reader.readInt32();
     this.currentHealth = reader.readInt32();
     this.currentMana = reader.readInt32();
@@ -171,9 +197,13 @@ export class Rogue1Player implements SaveFile {
       });
     }
 
-    AppController.log(`Player Data: ${this.asJson()}`);
+    AppController.log("Finished reading RogueLegacyPlayer.rcdat");
   }
 
+  /**
+   * Gets the json representation of this Rogue1Player.
+   * @returns The json representation of this Rogue1Player.
+   */
   asJson(): any {
     return {
       "gold": this.gold,
@@ -248,10 +278,20 @@ export class Rogue1Player implements SaveFile {
     };
   }
 
-  asBinary(): void {
-      
+  /**
+   * Gets the binary representation of this Rogue1Player.
+   * @returns The json representation of this Rogue1Player.
+   */
+  asBinary(): ArrayBuffer {
+    // AppController.log("Started writing RogueLegacyPlayer buffer.");
+    // AppController.log("Finished writing RogueLegacyPlayer buffer.");
+    return null;
   }
 
+  /**
+   * Sets this Rogue1Player based on the provided json data.
+   * @param json The json data to use.
+   */
   fromJson(json:any) {
     const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function");
 
@@ -260,6 +300,7 @@ export class Rogue1Player implements SaveFile {
         this[key] = json[key];
       } else {
         AppController.log(`Can't run Payer.fromJson(). Missing key ${key} in json.`);
+        break;
       }
     }
   }
