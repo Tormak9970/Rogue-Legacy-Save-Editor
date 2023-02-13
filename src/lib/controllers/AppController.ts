@@ -1,7 +1,6 @@
 import { fs, path } from "@tauri-apps/api";
 import { get, type Unsubscriber } from "svelte/store";
 import {
-  appDataDir,
   changedTabs,
   discardChangesDisabled,
   saveFiles,
@@ -44,7 +43,6 @@ export class AppController {
     await SettingsManager.setSettingsPath();
     let settings:AppSettings = await SettingsManager.getSettings();
 
-    appDataDir.set(settings.appDataDir == "" ? (await path.appConfigDir()) : settings.appDataDir);
     seriesEntry.set(settings.seriesEntry);
     saveDirPath.set(settings.seriesEntry === SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1SaveDir : settings.legacy2SaveDir);
     gameVersion.set(settings.seriesEntry === SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1Version : settings.legacy2Version);
@@ -96,8 +94,7 @@ export class AppController {
     AppController.logController.setFilePath(AppController.logFilePath);
     await AppController.logController.cleanLogFile();
 
-    const appDir = get(appDataDir);
-    const backupPath = await path.join(appDir, "backups");
+    const backupPath = await path.join(await path.appDataDir(), "backups");
 
     if (!(await fs.exists(backupPath))) await fs.createDir(backupPath);
     AppController.backupsController.setBackupDir(backupPath);

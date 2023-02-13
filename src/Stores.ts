@@ -3,7 +3,6 @@ import type { Writable } from "svelte/store";
 import { SeriesEntry } from "./lib/model/SeriesEntry";
 import type { SaveFile } from "./lib/model/SaveFile";
 
-export const appDataDir = writable("");
 export const saveDirPath = writable("");
 export const seriesEntry = writable(SeriesEntry.ROGUE_LEGACY_ONE);
 export const gameVersion = writable("");

@@ -1,7 +1,7 @@
 import { fs, path } from "@tauri-apps/api";
 import JSZip from "jszip";
 import { get } from "svelte/store";
-import { appDataDir, saveDirPath, showLoadBackupModal } from "../../Stores";
+import { saveDirPath, showLoadBackupModal } from "../../Stores";
 import { ToasterController } from "./ToasterController";
 import { isSaveFile } from "../utils/Utils";
 
@@ -22,9 +22,11 @@ export class BackupsController {
   private backupDir: string;
 
   constructor() {
-    appDataDir.subscribe(async (dir) => {
-      this.backupDir = await path.join(dir, "backups");
-    });
+    this.setInitialBackupDir();
+  }
+
+  private async setInitialBackupDir() {
+    this.backupDir = await path.join(await path.appDataDir(), "backups");
   }
 
   /**

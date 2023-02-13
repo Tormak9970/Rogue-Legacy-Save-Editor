@@ -1,6 +1,5 @@
 type AppSettings = {
   version:string;
-  appDataDir: string;
   selectedTab: string;
   seriesEntry: number;
   legacy1SaveDir: string;
