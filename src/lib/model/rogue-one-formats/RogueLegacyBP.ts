@@ -1,7 +1,7 @@
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
 import type { SaveFile } from "../SaveFile";
-import { EquipmentState, GearLevels } from "./RogueOneLUTs";
+import { EquipmentState, GearLevels, Runes } from "./RogueOneLUTs";
 
 /**
  * Class representing the ROgueLegacyBP.rcdat save file.
@@ -14,7 +14,13 @@ export class Rogue1BP implements SaveFile {
     "limbs": {},
     "cape": {}
   };
-  runes:string[][]; //[5][11]
+  runes = {
+    "sword": {},
+    "helm": {},
+    "chest": {},
+    "limbs": {},
+    "cape": {}
+  };
 
   // Sword, Helm, Chest, Limb, Cape
   equippedArmor:number[]; //[5]
@@ -34,27 +40,17 @@ export class Rogue1BP implements SaveFile {
   parseFile(reader:Reader): void {
     AppController.log("Started reading RogueLegacyBP.rcdat");
     
-    //! idk if this order is correct
-    for (let i = 0; i < 15; i++) {
-      this.blueprints.sword[GearLevels[i]] = EquipmentState[reader.readInt8()];
-    }
-    
-    for (let i = 0; i < 15; i++) {
-      this.blueprints.helm[GearLevels[i]] = EquipmentState[reader.readInt8()];
-    }
-    
-    for (let i = 0; i < 15; i++) {
-      this.blueprints.chest[GearLevels[i]] = EquipmentState[reader.readInt8()];
-    }
-    
-    for (let i = 0; i < 15; i++) {
-      this.blueprints.limbs[GearLevels[i]] = EquipmentState[reader.readInt8()];
-    }
-    
-    for (let i = 0; i < 15; i++) {
-      this.blueprints.cape[GearLevels[i]] = EquipmentState[reader.readInt8()];
-    }
+    for (let i = 0; i < 15; i++) this.blueprints.sword[GearLevels[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 15; i++) this.blueprints.helm[GearLevels[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 15; i++) this.blueprints.chest[GearLevels[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 15; i++) this.blueprints.limbs[GearLevels[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 15; i++) this.blueprints.cape[GearLevels[i]] = EquipmentState[reader.readInt8()];
 
+    for (let i = 0; i < 11; i++) this.runes.sword[Runes[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 11; i++) this.runes.helm[Runes[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 11; i++) this.runes.chest[Runes[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 11; i++) this.runes.limbs[Runes[i]] = EquipmentState[reader.readInt8()];
+    for (let i = 0; i < 11; i++) this.runes.cape[Runes[i]] = EquipmentState[reader.readInt8()];
 
     console.log(this.asJson());
     // AppController.log("Finished writing RogueLegacyBP.rcdat");

@@ -39,9 +39,9 @@ export class Rogue1Player implements SaveFile {
   private nameLength:number;
   name:string;
 
-  headPiece:number; //helm
-  shoulderPiece:number; //chest
-  chestPiece:number; //limbs
+  headPiece:number; //head model?
+  shoulderPiece:number; //cape model?
+  chestPiece:number; //chest model?
   diaryEntry:number;
 
   bonusHealth:number;

@@ -103,23 +103,37 @@ export const EquipmentState = {
 	"3": "Purchased"
 };
 
-// ! order is incorrect
 export const GearLevels = {
   "0": "Squire",
-  "1": "Knight",
-  "2": "Blood",
-  "3": "Silver",
-  "4": "Ranger",
-  "5": "Sage",
-  "6": "Guardian",
+  "1": "Silver",
+  "2": "Guardian",
+  "3": "Imperial",
+  "4": "Royal",
+  "5": "Knight",
+  "6": "Ranger",
   "7": "Sky",
-  "8": "Retribution",
-  "9": "Imperial",
-  "10": "Dragon",
-  "11": "Holy",
-  "12": "Royal",
-  "13": "Slayer",
+  "8": "Dragon",
+  "9": "Slayer",
+  "10": "Blood",
+  "11": "Sage",
+  "12": "Retribution",
+  "13": "Holy",
   "14": "Dark",
+}
+
+// ! not verified the order
+export const Runes = {
+  "0": "Sprint",
+  "1": "Vault",
+  "2": "Bounty",
+  "3": "Siphon",
+  "4": "Retaliation",
+  "5": "Grace",
+  "6": "Balance",
+  "7": "Curse",
+  "8": "Vampire",
+  "9": "Sky",
+  "10": "Haste"
 }
 
 // enum SkillType
