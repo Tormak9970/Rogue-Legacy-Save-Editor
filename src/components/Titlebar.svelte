@@ -36,6 +36,7 @@
         close.addEventListener('click', () => appWindow.close());
 
         await AppController.init();
+        await AppController.setup();
         
         if ($saveDirPath != "") {
             await AppController.loadSaves();

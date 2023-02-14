@@ -60,6 +60,7 @@ export class SettingsManager {
       }
 
       settings.version = __APP_VERSION__;
+      await SettingsManager.updateSettings({prop: "version", data: __APP_VERSION__});
     }
     
     return settings;

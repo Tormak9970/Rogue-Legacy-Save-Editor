@@ -10,7 +10,7 @@ import {
   tabs,
   unchangedTabs,
   seriesEntry,
-  gameVersion,
+  gameVersion
 } from "../../Stores";
 import { Reader } from "../utils/Reader";
 import { BackupsController } from "./BackupsController";
@@ -24,7 +24,6 @@ import { RogueOneSaveFileNames } from "../model/SaveFileNames";
 import { Rogue1Player } from "../model/rogue-one-formats/RogueLegacyPlayer";
 import { Rogue1BP } from "../model/rogue-one-formats/RogueLegacyBP";
 import { Rogue1Lineage } from "../model/rogue-one-formats/RogueLegacyLineage";
-import { LogLevel } from "./RustInterop";
 
 /**
  * The main controller for the application
@@ -44,14 +43,14 @@ export class AppController {
     let settings:AppSettings = await SettingsManager.getSettings();
 
     seriesEntry.set(settings.seriesEntry);
-    saveDirPath.set(settings.seriesEntry === SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1SaveDir : settings.legacy2SaveDir);
-    gameVersion.set(settings.seriesEntry === SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1Version : settings.legacy2Version);
+    saveDirPath.set(settings.seriesEntry == SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1SaveDir : settings.legacy2SaveDir);
+    gameVersion.set(settings.seriesEntry == SeriesEntry.ROGUE_LEGACY_ONE ? settings.legacy1Version : settings.legacy2Version);
 
     if (!AppController.seriesEntrySub) {
       AppController.seriesEntrySub = seriesEntry.subscribe(async (newVal:number) => {
         await SettingsManager.updateSettings({
-            prop: "seriesEntry",
-            data: newVal
+          prop: "seriesEntry",
+          data: newVal
         });
       });
     }
@@ -59,8 +58,8 @@ export class AppController {
     if (!AppController.gameVersionSub) {
       AppController.gameVersionSub = gameVersion.subscribe(async (newVal:string) => {
         await SettingsManager.updateSettings({
-            prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1Version": "legacy2Version",
-            data: newVal
+          prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1Version": "legacy2Version",
+          data: newVal
         });
       });
     }
@@ -68,17 +67,8 @@ export class AppController {
     if (!AppController.saveDirPathSub) {
       AppController.saveDirPathSub = saveDirPath.subscribe(async (newVal:string) => {
         await SettingsManager.updateSettings({
-            prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1SaveDir": "legacy2SaveDir",
-            data: newVal
-        });
-      });
-    }
-
-    if (!AppController.selectedTabSub) {
-      AppController.selectedTabSub = selectedTab.subscribe(async (newVal:string) => {
-        await SettingsManager.updateSettings({
-            prop: "selectedTab",
-            data: newVal
+          prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1SaveDir": "legacy2SaveDir",
+          data: newVal
         });
       });
     }
@@ -187,27 +177,31 @@ export class AppController {
    * Saves the current changes
    */
   static async saveChanges(): Promise<void> {
-    // const revision = Object.values(get(dsonFiles))[0].header.revision;
-    // const changes = Object.entries(get(tabs));
-    // const cTabs = get(changedTabs);
+    const saveFileObj = get(saveFiles);
+    const saveFileList = Object.entries(saveFileObj);
+    const changes = Object.entries(get(tabs));
+    const cTabs = get(changedTabs);
 
-    // // TODO only write files with changes
-    // for (let i = 0; i < changes.length; i++) {
-    //   const fileName = changes[i][0];
+    for (let i = 0; i < saveFileList.length; i++) {
+      const fileName = saveFileList[i][0];
+      const saveFile = saveFileObj[fileName];
 
-    //   if (cTabs[fileName]) {
-    //     const filePath = await path.join(get(saveDirPath), fileName);
-    //     const newData = changes[i][1];
+      if (cTabs[fileName]) {
+        const filePath = await path.join(get(saveDirPath), fileName);
+        const newData = changes[i][1];
 
-    //     const dWriter = new DsonWriter(newData as any, revision);
-    //     const dataBuf = dWriter.bytes();
+        saveFile.fromJson(newData);
+        const dataBuf = saveFile.asBinary();
 
-    //     await fs.writeBinaryFile(filePath, dataBuf);
-    //   }
-    // }
+        await fs.writeBinaryFile(filePath, dataBuf);
+        cTabs[fileName] = false;
+      }
+    }
 
-    // discardChangesDisabled.set(true);
-    // saveChangesDisabled.set(true);
+    changedTabs.set(cTabs);
+    saveFiles.set(saveFileObj);
+    discardChangesDisabled.set(true);
+    saveChangesDisabled.set(true);
   }
 
   /**

@@ -1,5 +1,6 @@
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
+import { Writer } from "../../utils/Writer";
 import type { SaveFile } from "../SaveFile";
 import { EquipmentState, GearLevels, Runes, SkillType } from "./RogueOneLUTs";
 
@@ -39,7 +40,7 @@ export class Rogue1BP implements SaveFile {
     "cape": "None"
   }
 
-  manorSkillLevels:{[key:string]: boolean};
+  manorSkillLevels:{[key:string]: number};
 
   constructor(reader?: Reader) {
     if (reader) this.parseFile(reader);
@@ -77,12 +78,9 @@ export class Rogue1BP implements SaveFile {
     this.equppedRunes.cape = Runes[reader.readInt8()];
 
     this.manorSkillLevels = {};
-    for (let i = 0; i < 32; i++) {
-      this.manorSkillLevels[SkillType[i]] = reader.readInt32() == 1;
-    }
+    for (let i = 0; i < 32; i++) this.manorSkillLevels[SkillType[i]] = reader.readInt32();
 
-    console.log(this.asJson());
-    // AppController.log("Finished writing RogueLegacyBP.rcdat");
+    AppController.log("Finished writing RogueLegacyBP.rcdat");
   }
 
   /**
@@ -104,9 +102,50 @@ export class Rogue1BP implements SaveFile {
    * @returns The binary representation of this Rogue1BP.
    */
   asBinary(): ArrayBuffer {
-    // AppController.log("Started writing RogueLegacyBP buffer.");
-    // AppController.log("Finished writing RogueLegacyBP buffer.");
-    return null;
+    AppController.log("Started writing RogueLegacyBP buffer.");
+
+    const blueprintLength = 15 * 5;
+    const runeLength = 11 * 5;
+    const equippedArmorLength = 5;
+    const equippedRunesLength = 5;
+    const manorSkillsLength = 32 * 4;
+
+    const gearLvlReverseLUT = Object.fromEntries(Object.entries(GearLevels).map(a => a.reverse()));
+    const runeReverseLUT = Object.fromEntries(Object.entries(Runes).map(a => a.reverse()));
+    const equipStateReverseLUT = Object.fromEntries(Object.entries(EquipmentState).map(a => a.reverse()));
+
+    const writer = new Writer(new Uint8Array(blueprintLength + runeLength + equippedArmorLength + equippedRunesLength + manorSkillsLength));
+
+    for (let i = 0; i < 15; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.blueprints.sword[GearLevels[i]]]));
+    for (let i = 0; i < 15; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.blueprints.helm[GearLevels[i]]]));
+    for (let i = 0; i < 15; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.blueprints.chest[GearLevels[i]]]));
+    for (let i = 0; i < 15; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.blueprints.limbs[GearLevels[i]]]));
+    for (let i = 0; i < 15; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.blueprints.cape[GearLevels[i]]]));
+
+    for (let i = 0; i < 11; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.runes.sword[Runes[i]]]));
+    for (let i = 0; i < 11; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.runes.helm[Runes[i]]]));
+    for (let i = 0; i < 11; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.runes.chest[Runes[i]]]));
+    for (let i = 0; i < 11; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.runes.limbs[Runes[i]]]));
+    for (let i = 0; i < 11; i++) writer.writeInt8(parseInt(equipStateReverseLUT[this.runes.cape[Runes[i]]]));
+
+    writer.writeInt8(parseInt(gearLvlReverseLUT[this.equippedArmor.sword]));
+    writer.writeInt8(parseInt(gearLvlReverseLUT[this.equippedArmor.helm]));
+    writer.writeInt8(parseInt(gearLvlReverseLUT[this.equippedArmor.chest]));
+    writer.writeInt8(parseInt(gearLvlReverseLUT[this.equippedArmor.limbs]));
+    writer.writeInt8(parseInt(gearLvlReverseLUT[this.equippedArmor.cape]));
+
+    writer.writeInt8(parseInt(runeReverseLUT[this.equppedRunes.sword]));
+    writer.writeInt8(parseInt(runeReverseLUT[this.equppedRunes.helm]));
+    writer.writeInt8(parseInt(runeReverseLUT[this.equppedRunes.chest]));
+    writer.writeInt8(parseInt(runeReverseLUT[this.equppedRunes.limbs]));
+    writer.writeInt8(parseInt(runeReverseLUT[this.equppedRunes.cape]));
+
+    for (let i = 0; i < 32; i++) writer.writeInt32(parseInt(this.manorSkillLevels[SkillType[i]] as any));
+
+    writer.trim();
+
+    AppController.log("Finished writing RogueLegacyBP buffer.");
+    return writer.data;
   }
 
   /**
