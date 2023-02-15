@@ -283,7 +283,7 @@ export class Rogue1Player implements SaveFile {
   asBinary(): ArrayBuffer {
     AppController.log("Started writing RogueLegacyPlayer buffer.");
 
-    const playerInfoLength = 19 + this.name.length + 74 + 3;
+    const playerInfoLength = 20 + this.name.length + 78 + 3;
     const enemiesBeatenLength = 4 * 34;
     const numTypesEnemiesLength = 4;
     const typesEnemiesKilledLength = this.numTypesEnemiesKilled * 8;
