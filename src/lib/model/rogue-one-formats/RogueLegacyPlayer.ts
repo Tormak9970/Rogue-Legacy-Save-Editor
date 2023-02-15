@@ -111,43 +111,43 @@ export class Rogue1Player implements SaveFile {
 
     this.gold = reader.readInt32();
     this.currentHealth = reader.readInt32();
-    this.currentMana = reader.readInt32();
+    this.currentMana = reader.readInt32(); //12
 
     this.age = reader.readUint8();
     this.childAge = reader.readInt8();
     this.spell = SpellType[reader.readInt8().toString()];
     this.classType = ClassType[reader.readInt8().toString()];
     this.specialItem = SpecialItem[reader.readInt8().toString()];
-    this.trait = [ Traits[reader.readInt8().toString()], Traits[reader.readInt8().toString()] ];
+    this.trait = [ Traits[reader.readInt8().toString()], Traits[reader.readInt8().toString()] ]; //19
 
     this.nameLength = reader.readInt8();
     this.name = reader.readString(this.nameLength);
 
-    this.headPiece = reader.readInt8();
+    this.headPiece = reader.readInt8(); //1
     this.shoulderPiece = reader.readInt8();
     this.chestPiece = reader.readInt8();
-    this.diaryEntry = reader.readInt8();
+    this.diaryEntry = reader.readInt8(); //4
 
     this.bonusHealth = reader.readInt32();
     this.bonusStrength = reader.readInt32();
     this.bonusManapeak = reader.readInt32();
     this.bonusDefense = reader.readInt32();
     this.bonusWeight = reader.readInt32();
-    this.bonusMagic = reader.readInt32();
+    this.bonusMagic = reader.readInt32(); //28
 
     this.lichHealth = reader.readInt32();
     this.lichMana = reader.readInt32();
-    this.lichHealthMod = reader.readFloat32();
+    this.lichHealthMod = reader.readFloat32(); //36
 
     this.newBossBeaten = reader.readInt8() == 1;
     this.eyeballBossBeaten = reader.readInt8() == 1;
     this.fairyBossBeaten = reader.readInt8() == 1;
     this.fireballBossBeaten = reader.readInt8() == 1;
     this.blobBossBeaten = reader.readInt8() == 1;
-    this.lastBossBeaten = reader.readInt8() == 1;
+    this.lastBossBeaten = reader.readInt8() == 1; //42
 
     this.timesCastleBeaten = reader.readInt32();
-    this.numEnemiesBeaten = reader.readInt32();
+    this.numEnemiesBeaten = reader.readInt32(); //50
 
     this.tutorialComplete = reader.readInt8() == 1;
     this.characterFound = reader.readInt8() == 1;
@@ -160,14 +160,14 @@ export class Rogue1Player implements SaveFile {
     this.isDead = reader.readInt8() == 1;
     this.finalDoorOpened = reader.readInt8() == 1;
     this.rerolledChildren = reader.readInt8() == 1;
-    this.isFemale = reader.readInt8() == 1;
+    this.isFemale = reader.readInt8() == 1; //62
 
     this.timesDead = reader.readInt32();
 
     this.hasArchitectFree = reader.readInt8() == 1;
     this.readLastDiary = reader.readInt8() == 1;
     this.spokenToLastBoss = reader.readInt8() == 1;
-    this.hardcoreMode = reader.readInt8() == 1;
+    this.hardcoreMode = reader.readInt8() == 1; //70
 
     this.totalHoursPlayed = reader.readFloat32();
 
@@ -175,7 +175,7 @@ export class Rogue1Player implements SaveFile {
       reader.readInt8(),
       reader.readInt8(),
       reader.readInt8()
-    ];
+    ]; //77
 
     this.enemiesBeaten = [];
     for (let i = 0; i < 4; i++) {
@@ -272,8 +272,6 @@ export class Rogue1Player implements SaveFile {
 
       "enemiesBeaten": this.enemiesBeaten,
 
-      "numTypesEnemiesKilled": this.numTypesEnemiesKilled,
-
       "typesEnemiesKilled": this.typesEnemiesKilled
     };
   }
@@ -285,19 +283,103 @@ export class Rogue1Player implements SaveFile {
   asBinary(): ArrayBuffer {
     AppController.log("Started writing RogueLegacyPlayer buffer.");
 
-    const playerInfoLength = ;
-    const enemiesBeatenLength = ;
+    const playerInfoLength = 19 + this.name.length + 74 + 3;
+    const enemiesBeatenLength = 4 * 34;
     const numTypesEnemiesLength = 4;
-    const typesEnemiesKilledLength = ;
+    const typesEnemiesKilledLength = this.numTypesEnemiesKilled * 8;
     
-    const traitsReverseLUT = Object.fromEntries(Object.entries(Traits).map(a => a.reverse()));
     const spellTypeReverseLUT = Object.fromEntries(Object.entries(SpellType).map(a => a.reverse()));
     const classTypeReverseLUT = Object.fromEntries(Object.entries(ClassType).map(a => a.reverse()));
+    const specialItemReverseLUT = Object.fromEntries(Object.entries(SpecialItem).map(a => a.reverse()));
+    const traitsReverseLUT = Object.fromEntries(Object.entries(Traits).map(a => a.reverse()));
 
     const writer = new Writer(new Uint8Array(playerInfoLength + enemiesBeatenLength + numTypesEnemiesLength + typesEnemiesKilledLength));
 
-    // AppController.log("Finished writing RogueLegacyPlayer buffer.");
-    return null;
+    writer.writeInt32(this.gold);
+    writer.writeInt32(this.currentHealth);
+    writer.writeInt32(this.currentMana);
+
+    writer.writeInt8(this.age);
+    writer.writeInt8(this.childAge);
+    writer.writeInt8(parseInt(spellTypeReverseLUT[this.spell]));
+    writer.writeInt8(parseInt(classTypeReverseLUT[this.classType]));
+    writer.writeInt8(parseInt(specialItemReverseLUT[this.specialItem]));
+
+    writer.writeInt8(parseInt(traitsReverseLUT[this.trait[0]]));
+    writer.writeInt8(parseInt(traitsReverseLUT[this.trait[1]]));
+
+    writer.writeInt8(this.name.length);
+    writer.writeString(this.name);
+
+    writer.writeInt8(this.headPiece);
+    writer.writeInt8(this.shoulderPiece);
+    writer.writeInt8(this.chestPiece);
+    writer.writeInt8(this.diaryEntry);
+
+    writer.writeInt32(this.bonusHealth);
+    writer.writeInt32(this.bonusStrength);
+    writer.writeInt32(this.bonusManapeak);
+    writer.writeInt32(this.bonusDefense);
+    writer.writeInt32(this.bonusWeight);
+    writer.writeInt32(this.bonusMagic);
+    
+    writer.writeInt32(this.lichHealth);
+    writer.writeInt32(this.lichMana);
+    writer.writeInt32(this.lichHealthMod);
+    
+    writer.writeInt8(this.newBossBeaten ? 1 : 0);
+    writer.writeInt8(this.eyeballBossBeaten ? 1 : 0);
+    writer.writeInt8(this.fairyBossBeaten ? 1 : 0);
+    writer.writeInt8(this.fireballBossBeaten ? 1 : 0);
+    writer.writeInt8(this.blobBossBeaten ? 1 : 0);
+    writer.writeInt8(this.lastBossBeaten ? 1 : 0);
+    
+    writer.writeInt32(this.timesCastleBeaten);
+    writer.writeInt32(this.numEnemiesBeaten);
+    
+    writer.writeInt8(this.tutorialComplete ? 1 : 0);
+    writer.writeInt8(this.characterFound ? 1 : 0);
+    writer.writeInt8(this.loadStartingRoom ? 1 : 0);
+    writer.writeInt8(this.lockCastle ? 1 : 0);
+    writer.writeInt8(this.spokeToBlacksmith ? 1 : 0);
+    writer.writeInt8(this.spokeToEnchantress ? 1 : 0);
+    writer.writeInt8(this.spokeToArchitect ? 1 : 0);
+    writer.writeInt8(this.spokeToCollector ? 1 : 0);
+    writer.writeInt8(this.isDead ? 1 : 0);
+    writer.writeInt8(this.finalDoorOpened ? 1 : 0);
+    writer.writeInt8(this.rerolledChildren ? 1 : 0);
+    writer.writeInt8(this.isFemale ? 1 : 0);
+    
+    writer.writeInt8(this.hasArchitectFree ? 1 : 0);
+    writer.writeInt8(this.readLastDiary ? 1 : 0);
+    writer.writeInt8(this.spokenToLastBoss ? 1 : 0);
+    writer.writeInt8(this.hardcoreMode ? 1 : 0);
+    
+    writer.writeInt32(this.totalHoursPlayed);
+    
+    writer.writeInt8(this.wizardSpellList[0]);
+    writer.writeInt8(this.wizardSpellList[1]);
+    writer.writeInt8(this.wizardSpellList[2]);
+
+    for (let i = 0; i < 4; i++) {
+      const enemyInfo = this.enemiesBeaten[i];
+
+      for (let j = 0; j < 34; j++) {
+        writer.writeInt8(enemyInfo[j]);
+      }
+    }
+    
+    writer.writeInt32(this.numTypesEnemiesKilled);
+
+    for (let i = 0; i < this.numTypesEnemiesKilled; i++) {
+      const enemyType = this.typesEnemiesKilled[i];
+
+      writer.writeInt32(enemyType.mobId);
+      writer.writeInt32(enemyType.count);
+    }
+
+    AppController.log("Finished writing RogueLegacyPlayer buffer.");
+    return writer.data;
   }
 
   /**
@@ -306,10 +388,12 @@ export class Rogue1Player implements SaveFile {
    * @returns true if there were no errors.
    */
   fromJson(json:any): boolean {
-    const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function");
+    const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function" && key != "nameLength" && key != "numTypesEnemiesKilled");
+    const jKeys = Object.keys(json);
 
+    console.log(json);
     for (const key of keys) {
-      if (json[key]) {
+      if (jKeys.includes(key)) {
         this[key] = json[key];
       } else {
         AppController.error(`Can't run Payer.fromJson(). Missing key ${key} in json.`);
@@ -318,6 +402,7 @@ export class Rogue1Player implements SaveFile {
     }
 
     this.nameLength = json.name.length;
+    this.numTypesEnemiesKilled = json.typesEnemiesKilled.length;
 
     return true;
   }
