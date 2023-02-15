@@ -18,6 +18,7 @@
 
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
+import { Writer } from "../../utils/Writer";
 import type { SaveFile } from "../SaveFile";
 import { ClassType, SpellType, Traits } from "./RogueOneLUTs";
 
@@ -68,7 +69,7 @@ export class Rogue1Lineage implements SaveFile {
       let generationText = "";
       if (generationLength != 0) generationText = reader.readString(generationLength);
 
-      this.branch.push(new Rogue1PlayerLineageData(nameLength, name, spell, classType, headPiece, chestPiece, shoulderPiece, age, childAge, trait, isFemale, generationLength, generationText));
+      this.branch.push(new Rogue1PlayerLineageData(name, spell, classType, headPiece, chestPiece, shoulderPiece, age, childAge, trait, isFemale, generationText));
     }
     
     this.numLineage = reader.readInt32();
@@ -96,7 +97,7 @@ export class Rogue1Lineage implements SaveFile {
       let generationText = "";
       if (generationLength != 0) generationText = reader.readString(generationLength);
 
-      this.lineage.push(new Rogue1FamilyTreeNode(nameLength, name, age, classType, headPiece, chestPiece, shoulderPiece, numEnemiesBeaten, beatenABoss, trait, isFemale, generationLength, generationText));
+      this.lineage.push(new Rogue1FamilyTreeNode(name, age, classType, headPiece, chestPiece, shoulderPiece, numEnemiesBeaten, beatenABoss, trait, isFemale, generationText));
     }
 
     AppController.log("Finished reading RogueLegacyLineage.rcdat");
@@ -108,9 +109,7 @@ export class Rogue1Lineage implements SaveFile {
    */
   asJson(): any {
     return {
-      "numCurrentBranch": this.numCurrentBranch,
       "branch": this.branch,
-      "numLineage": this.numLineage,
       "lineage": this.lineage
     };
   }
@@ -120,24 +119,103 @@ export class Rogue1Lineage implements SaveFile {
    * @returns The binary representation of this Rogue1Lineage.
    */
   asBinary(): ArrayBuffer {
-    // AppController.log("Started writing RogueLegacyLineage buffer.");
-    // AppController.log("Finished writing RogueLegacyLineage buffer.");
-    return null;
+    AppController.log("Started writing RogueLegacyLineage buffer.");
+
+    const numCurBranchLength = 4;
+    let branchListLength = 0;
+    for (let i = 0; i < this.numCurrentBranch; i++) {
+      const iBranch = this.branch[i];
+      branchListLength += 1 + iBranch.name.length + 11;
+      if (iBranch.generationText.length > 0) branchListLength += iBranch.generationText.length;
+    }
+    const numLineageLength = 4;
+    let lineageListLength = 0;
+    for (let i = 0; i < this.numLineage; i++) {
+      const iLineage = this.lineage[i];
+      lineageListLength += 1 + iLineage.name.length + 14;
+      if (iLineage.generationText.length > 0) lineageListLength += iLineage.generationText.length;
+    }
+
+    const traitsReverseLUT = Object.fromEntries(Object.entries(Traits).map(a => a.reverse()));
+    const spellTypeReverseLUT = Object.fromEntries(Object.entries(SpellType).map(a => a.reverse()));
+    const classTypeReverseLUT = Object.fromEntries(Object.entries(ClassType).map(a => a.reverse()));
+
+    const writer = new Writer(new Uint8Array(numCurBranchLength + branchListLength + numLineageLength + lineageListLength));
+
+
+    writer.writeInt32(this.numCurrentBranch);
+    for (let i = 0; i < this.numCurrentBranch; i++) {
+      const iBranch = this.branch[i];
+
+      writer.writeLenPrefixString(iBranch.name);
+      writer.writeInt8(parseInt(spellTypeReverseLUT[iBranch.spell]));
+      writer.writeInt8(parseInt(classTypeReverseLUT[iBranch.classType]));
+      writer.writeInt8(iBranch.headPiece);
+      writer.writeInt8(iBranch.chestPiece);
+      writer.writeInt8(iBranch.shoulderPiece);
+      
+      writer.writeInt8(iBranch.age);
+      writer.writeInt8(iBranch.childAge);
+      
+      writer.writeInt8(parseInt(traitsReverseLUT[iBranch.trait[0]]));
+      writer.writeInt8(parseInt(traitsReverseLUT[iBranch.trait[1]]));
+
+      writer.writeInt8(iBranch.isFemale);
+      
+      if (iBranch.generationText.length > 0) {
+        writer.writeLenPrefixString(iBranch.generationText);
+      } else {
+        writer.writeInt8(0);
+      }
+    }
+    
+    writer.writeInt32(this.numLineage);
+    for (let i = 0; i < this.numLineage; i++) {
+      const iLineage = this.lineage[i];
+
+      writer.writeLenPrefixString(iLineage.name);
+      writer.writeInt8(iLineage.age);
+      writer.writeInt8(parseInt(classTypeReverseLUT[iLineage.classType]));
+      writer.writeInt8(iLineage.headPiece);
+      writer.writeInt8(iLineage.chestPiece);
+      writer.writeInt8(iLineage.shoulderPiece);
+      
+      writer.writeInt32(iLineage.numEnemiesBeaten);
+      writer.writeInt8(iLineage.beatenABoss ? 1 : 0);
+      
+      writer.writeInt8(parseInt(traitsReverseLUT[iLineage.trait[0]]));
+      writer.writeInt8(parseInt(traitsReverseLUT[iLineage.trait[1]]));
+
+      writer.writeInt8(iLineage.isFemale);
+      
+      if (iLineage.generationText.length > 0) {
+        writer.writeLenPrefixString(iLineage.generationText);
+      } else {
+        writer.writeInt8(0);
+      }
+    }
+
+    AppController.log("Finished writing RogueLegacyLineage buffer.");
+    return writer.data;
   }
 
   /**
    * Sets this Rogue1Lineage based on the provided json data.
    * @param json The json data to use.
+   * @returns true if there were no errors.
    */
-  fromJson(json:any) {
-    const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function");
+  fromJson(json:any): boolean {
+    const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function" && key != "numCurrentBranch" && key != "numLineage");
 
     for (const key of keys) {
       if (json[key]) {
         if (key == "branch") {
+          console.log(json[key]);
           this[key] = json[key].map((entry:any) => {
+            console.log(entry);
             return Rogue1PlayerLineageData.fromJson(entry);
           });
+          console.log(this[key]);
         } else if (key == "lineage") {
           this[key] = json[key].map((entry:any) => {
             return Rogue1FamilyTreeNode.fromJson(entry);
@@ -146,10 +224,17 @@ export class Rogue1Lineage implements SaveFile {
           this[key] = json[key];
         }
       } else {
-        AppController.log(`Can't run Lineage.fromJson(). Missing key ${key} in json.`);
-        break;
+        AppController.error(`Can't run Lineage.fromJson(). Missing key ${key} in json.`);
+        return false;
       }
     }
+
+    this.numCurrentBranch = this.branch.length;
+    this.numLineage = this.lineage.length;
+
+    console.log(this);
+
+    return true;
   }
 }
 
@@ -157,7 +242,6 @@ export class Rogue1Lineage implements SaveFile {
  * Class representing an entry in a lineage.
  */
 export class Rogue1PlayerLineageData {
-  nameLength:number;
   name:string;
   spell:string;
   classType:string;
@@ -168,11 +252,9 @@ export class Rogue1PlayerLineageData {
   childAge:number;
   trait:[string, string];
   isFemale:boolean;
-  generationLength:number;
   generationText:string
 
-  constructor(nameLength:number, name:string, spell:string, classType:string, headPiece:number, chestPiece:number, shoulderPiece:number, age:number, childAge:number, trait:[string, string], isFemale:boolean, generationLength:number, generationText:string) {
-    this.nameLength = nameLength;
+  constructor(name:string, spell:string, classType:string, headPiece:number, chestPiece:number, shoulderPiece:number, age:number, childAge:number, trait:[string, string], isFemale:boolean, generationText:string) {
     this.name = name;
     this.spell = spell;
     this.classType = classType;
@@ -183,7 +265,6 @@ export class Rogue1PlayerLineageData {
     this.childAge = childAge;
     this.trait = trait;
     this.isFemale = isFemale;
-    this.generationLength = generationLength;
     this.generationText = generationText;
   }
 
@@ -193,19 +274,16 @@ export class Rogue1PlayerLineageData {
    * @returns A new Rogue1PlayerLineageData with the provided props.
    */
   static fromJson(json:any): Rogue1PlayerLineageData {
-    const props:any = {};
     const keys = Object.keys(this);
 
     for (const key of keys) {
-      if (json[key]) {
-        props[key] = json[key];
-      } else {
-        AppController.log(`Can't run PayerLineageData.fromJson(). Missing key ${key} in json.`);
+      if (!json[key]) {
+        AppController.error(`Can't run PayerLineageData.fromJson(). Missing key ${key} in json.`);
         return undefined;
       }
     }
 
-    return new Rogue1PlayerLineageData(props.nameLength, props.name, props.spell, props.classType, props.headPiece, props.chestPiece, props.shoulderPiece, props.age, props.childAge, props.trait, props.isFemale, props.generationLength, props.generationText);
+    return new Rogue1PlayerLineageData(json.name, json.spell, json.classType, json.headPiece, json.chestPiece, json.shoulderPiece, json.age, json.childAge, json.trait, json.isFemale, json.generationText);
   }
 }
 
@@ -213,7 +291,6 @@ export class Rogue1PlayerLineageData {
  * Class representing a node in the family tree.
  */
 export class Rogue1FamilyTreeNode {
-  nameLength:number;
   name:string;
   age:number;
   classType:string;
@@ -224,11 +301,9 @@ export class Rogue1FamilyTreeNode {
   beatenABoss:boolean;
   trait:[string, string];
   isFemale:boolean;
-  generationLength:number;
   generationText:string
 
-  constructor(nameLength:number, name:string, age:number, classType:string, headPiece:number, chestPiece:number, shoulderPiece:number, numEnemiesBeaten:number, beatenABoss:boolean, trait:[string, string], isFemale:boolean, generationLength:number, generationText:string) {
-    this.nameLength = nameLength;
+  constructor(name:string, age:number, classType:string, headPiece:number, chestPiece:number, shoulderPiece:number, numEnemiesBeaten:number, beatenABoss:boolean, trait:[string, string], isFemale:boolean, generationText:string) {
     this.name = name;
     this.age = age;
     this.classType = classType;
@@ -239,7 +314,6 @@ export class Rogue1FamilyTreeNode {
     this.beatenABoss = beatenABoss;
     this.trait = trait;
     this.isFemale = isFemale;
-    this.generationLength = generationLength;
     this.generationText = generationText;
   }
 
@@ -249,18 +323,15 @@ export class Rogue1FamilyTreeNode {
    * @returns A new Rogue1FamilyTreeNode with the provided props.
    */
   static fromJson(json:any): Rogue1FamilyTreeNode {
-    const props:any = {};
     const keys = Object.keys(this);
 
     for (const key of keys) {
-      if (json[key]) {
-        props[key] = json[key];
-      } else {
-        AppController.log(`Can't run FamilyTreeNode.fromJson(). Missing key ${key} in json.`);
+      if (!json[key]) {
+        AppController.error(`Can't run FamilyTreeNode.fromJson(). Missing key ${key} in json.`);
         return undefined;
       }
     }
 
-    return new Rogue1FamilyTreeNode(props.nameLength, props.name, props.age, props.classType, props.headPiece, props.chestPiece, props.shoulderPiece, props.numEnemiesBeaten, props.beatenABoss, props.trait, props.isFemale, props.generationLength, props.generationText);
+    return new Rogue1FamilyTreeNode(json.name, json.age, json.classType, json.headPiece, json.chestPiece, json.shoulderPiece, json.numEnemiesBeaten, json.beatenABoss, json.trait, json.isFemale, json.generationText);
   }
 }

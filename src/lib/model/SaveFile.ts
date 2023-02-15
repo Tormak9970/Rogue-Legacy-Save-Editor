@@ -4,5 +4,5 @@ export interface SaveFile {
   parseFile(reader:Reader): void;
   asJson(): any;
   asBinary(): ArrayBuffer;
-  fromJson(json:any): void;
+  fromJson(json:any): boolean;
 }

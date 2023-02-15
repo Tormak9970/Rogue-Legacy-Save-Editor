@@ -190,11 +190,15 @@ export class AppController {
         const filePath = await path.join(get(saveDirPath), fileName);
         const newData = changes[i][1];
 
-        saveFile.fromJson(newData);
-        const dataBuf = saveFile.asBinary();
+        const success = saveFile.fromJson(newData);
+        if (success) {
+          const dataBuf = saveFile.asBinary();
 
-        await fs.writeBinaryFile(filePath, dataBuf);
-        cTabs[fileName] = false;
+          await fs.writeBinaryFile(filePath, dataBuf);
+          cTabs[fileName] = false;
+        } else {
+          AppController.error(`Failed to write file ${fileName}`);
+        }
       }
     }
 
@@ -232,19 +236,28 @@ export class AppController {
    * Logs a message with level [INFO] to the app's log file.
    * @param message Message to log.
    */
-  static log(message:string) { AppController.logController.log(message); }
+  static log(message:string) {
+    AppController.logController.log(message);
+    console.log(message);
+  }
   
   /**
    * Logs a message with level [WARNING] to the app's log file.
    * @param message Message to log.
    */
-  static warn(message:string) { AppController.logController.warn(message); }
+  static warn(message:string) {
+    AppController.logController.warn(message);
+    console.warn(message);
+  }
   
   /**
    * Logs a message with level [ERROR] to the app's log file.
    * @param message Message to log.
    */
-  static error(message:string) { AppController.logController.error(message); }
+  static error(message:string) {
+    AppController.logController.error(message);
+    console.error(message);
+  }
 
   /**
    * Function run on app closing/refreshing.

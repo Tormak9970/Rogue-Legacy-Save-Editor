@@ -217,7 +217,6 @@ export class Rogue1Player implements SaveFile {
       "specialItem": this.specialItem,
       "trait": this.trait,
 
-      "nameLength": this.nameLength,
       "name": this.name,
 
       "headPiece": this.headPiece,
@@ -291,17 +290,22 @@ export class Rogue1Player implements SaveFile {
   /**
    * Sets this Rogue1Player based on the provided json data.
    * @param json The json data to use.
+   * @returns true if there were no errors.
    */
-  fromJson(json:any) {
+  fromJson(json:any): boolean {
     const keys = Object.keys(this).filter((key:string) => typeof this[key] != "function");
 
     for (const key of keys) {
       if (json[key]) {
         this[key] = json[key];
       } else {
-        AppController.log(`Can't run Payer.fromJson(). Missing key ${key} in json.`);
-        break;
+        AppController.error(`Can't run Payer.fromJson(). Missing key ${key} in json.`);
+        return false;
       }
     }
+
+    this.nameLength = json.name.length;
+
+    return true;
   }
 }
