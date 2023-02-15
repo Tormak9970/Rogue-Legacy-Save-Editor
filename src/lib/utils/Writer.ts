@@ -271,6 +271,24 @@ export class Writer {
   }
 
   /**
+   * Writes the provided string to the current offset.
+   * @param {string} str the string to write
+   * @param  {boolean} endianness whether or not to use littleEdian. Default is true.
+   * @returns the number of bytes written
+   */
+  writeString(str: string, endianness: boolean = true): number {
+    const length = str.length;
+    if (this.remaining() <= length) {
+      this.expandCapacity();
+    }
+
+    const strBytes = encoder.encode(str);
+    this.writeUnsignedBytes(strBytes, endianness);
+
+    return strBytes.length;
+  }
+
+  /**
    * Writes the provided string to the current offset, followed by a 0x00 byte
    * @param {string} str the string to write
    * @param  {boolean} endianness whether or not to use littleEdian. Default is true.

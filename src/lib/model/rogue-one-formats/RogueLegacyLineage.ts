@@ -147,7 +147,8 @@ export class Rogue1Lineage implements SaveFile {
     for (let i = 0; i < this.numCurrentBranch; i++) {
       const iBranch = this.branch[i];
 
-      writer.writeLenPrefixString(iBranch.name);
+      writer.writeInt8(iBranch.name.length);
+      writer.writeString(iBranch.name);
       writer.writeInt8(parseInt(spellTypeReverseLUT[iBranch.spell]));
       writer.writeInt8(parseInt(classTypeReverseLUT[iBranch.classType]));
       writer.writeInt8(iBranch.headPiece);
@@ -162,10 +163,9 @@ export class Rogue1Lineage implements SaveFile {
 
       writer.writeInt8(iBranch.isFemale);
       
+      writer.writeInt8(iBranch.generationText.length);
       if (iBranch.generationText.length > 0) {
-        writer.writeLenPrefixString(iBranch.generationText);
-      } else {
-        writer.writeInt8(0);
+        writer.writeString(iBranch.generationText);
       }
     }
     
@@ -173,7 +173,8 @@ export class Rogue1Lineage implements SaveFile {
     for (let i = 0; i < this.numLineage; i++) {
       const iLineage = this.lineage[i];
 
-      writer.writeLenPrefixString(iLineage.name);
+      writer.writeInt8(iLineage.name.length);
+      writer.writeString(iLineage.name);
       writer.writeInt8(iLineage.age);
       writer.writeInt8(parseInt(classTypeReverseLUT[iLineage.classType]));
       writer.writeInt8(iLineage.headPiece);
@@ -188,10 +189,9 @@ export class Rogue1Lineage implements SaveFile {
 
       writer.writeInt8(iLineage.isFemale);
       
+      writer.writeInt8(iLineage.generationText.length);
       if (iLineage.generationText.length > 0) {
-        writer.writeLenPrefixString(iLineage.generationText);
-      } else {
-        writer.writeInt8(0);
+        writer.writeString(iLineage.generationText);
       }
     }
 
