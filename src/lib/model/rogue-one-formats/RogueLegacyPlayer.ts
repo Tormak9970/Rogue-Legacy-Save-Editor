@@ -18,6 +18,7 @@
 
 import { AppController } from "../../controllers/AppController";
 import type { Reader } from "../../utils/Reader";
+import { Writer } from "../../utils/Writer";
 import type { SaveFile } from "../SaveFile";
 import { ClassType, SpecialItem, SpellType, Traits } from "./RogueOneLUTs";
 
@@ -282,7 +283,19 @@ export class Rogue1Player implements SaveFile {
    * @returns The json representation of this Rogue1Player.
    */
   asBinary(): ArrayBuffer {
-    // AppController.log("Started writing RogueLegacyPlayer buffer.");
+    AppController.log("Started writing RogueLegacyPlayer buffer.");
+
+    const playerInfoLength = ;
+    const enemiesBeatenLength = ;
+    const numTypesEnemiesLength = 4;
+    const typesEnemiesKilledLength = ;
+    
+    const traitsReverseLUT = Object.fromEntries(Object.entries(Traits).map(a => a.reverse()));
+    const spellTypeReverseLUT = Object.fromEntries(Object.entries(SpellType).map(a => a.reverse()));
+    const classTypeReverseLUT = Object.fromEntries(Object.entries(ClassType).map(a => a.reverse()));
+
+    const writer = new Writer(new Uint8Array(playerInfoLength + enemiesBeatenLength + numTypesEnemiesLength + typesEnemiesKilledLength));
+
     // AppController.log("Finished writing RogueLegacyPlayer buffer.");
     return null;
   }
