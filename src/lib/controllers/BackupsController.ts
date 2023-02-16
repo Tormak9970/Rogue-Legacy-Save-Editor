@@ -1,7 +1,7 @@
 import { fs, path } from "@tauri-apps/api";
 import JSZip from "jszip";
 import { get } from "svelte/store";
-import { saveDirPath, showLoadBackupModal } from "../../Stores";
+import { saveDirPath, selectedProfile, showLoadBackupModal } from "../../Stores";
 import { ToasterController } from "./ToasterController";
 import { isSaveFile } from "../utils/Utils";
 
@@ -119,12 +119,12 @@ export class BackupsController {
   async backup() {
     const loaderId = ToasterController.showLoaderToast("Generating backup...");
     const saveDir = get(saveDirPath);
+    const profile = get(selectedProfile);
     const zip = new JSZip();
 
-    const saveSlot = await path.basename(saveDir);
-    const zipName = `${this.saveSchema(saveSlot, this.getBackupInfo())}.zip`;
+    const zipName = `${this.saveSchema(profile, this.getBackupInfo())}.zip`;
 
-    const saveConts = await fs.readDir(saveDir);
+    const saveConts = await fs.readDir(await path.join(saveDir, profile));
 
     for (let i = 0; i < saveConts.length; i++) {
       const saveFilePath = saveConts[i];

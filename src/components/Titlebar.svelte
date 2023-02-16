@@ -37,10 +37,6 @@
 
         await AppController.init();
         await AppController.setup();
-        
-        if ($saveDirPath != "") {
-            await AppController.loadSaves();
-        }
     });
 </script>
 

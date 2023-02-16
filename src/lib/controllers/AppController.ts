@@ -10,7 +10,9 @@ import {
   tabs,
   unchangedTabs,
   seriesEntry,
-  gameVersion
+  gameVersion,
+  selectedProfile,
+  availableProfiles
 } from "../../Stores";
 import { Reader } from "../utils/Reader";
 import { BackupsController } from "./BackupsController";
@@ -37,6 +39,7 @@ export class AppController {
   private static gameVersionSub:Unsubscriber;
   private static saveDirPathSub:Unsubscriber;
   private static selectedTabSub:Unsubscriber;
+  private static selectedProfileSub:Unsubscriber;
 
   static async setup(): Promise<void> {
     await SettingsManager.setSettingsPath();
@@ -66,10 +69,29 @@ export class AppController {
 
     if (!AppController.saveDirPathSub) {
       AppController.saveDirPathSub = saveDirPath.subscribe(async (newVal:string) => {
+        AppController.log(`Updated save dir for Rogue Legacy ${get(seriesEntry)} to ${newVal}`);
+
+        const saveDirConts = await fs.readDir(newVal);
+        const profileFolders = saveDirConts.filter((entry) => entry.name.toLowerCase().includes("profile"));
+
+        if (profileFolders) {
+          availableProfiles.set(profileFolders.map((entry) => entry.name));
+          selectedProfile.set(get(availableProfiles)[0]);
+        } else {
+          ToasterController.showGenericToast("Select a folder with profiles inside");
+        }
+
         await SettingsManager.updateSettings({
           prop: get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "legacy1SaveDir": "legacy2SaveDir",
           data: newVal
         });
+      });
+    }
+
+    if (!AppController.selectedProfileSub) {
+      AppController.selectedProfileSub = selectedProfile.subscribe(async (newVal:string) => {
+        AppController.log(`Updated selected profile for Rogue Legacy ${get(seriesEntry)} to ${newVal}`);
+        await AppController.loadSaves();
       });
     }
   }
@@ -102,14 +124,16 @@ export class AppController {
    * Loads the user's save files
    */
   static async loadSaves(): Promise<void> {
+    AppController.log(`Loading saves for Rogue Legacy ${get(seriesEntry)}`);
     const saveDir = get(saveDirPath);
+    const profile = get(selectedProfile);
 
     const newTabs = {};
     const newSaveFiles = {};
     const wasChanged = {};
-    if (saveDir != "") {
+    if (saveDir != "" && profile != "") {
       const loaderId = ToasterController.showLoaderToast("Loading save data");
-      const saveConts = await fs.readDir(saveDir);
+      const saveConts = await fs.readDir(await path.join(saveDir, profile));
 
       if (get(seriesEntry) == SeriesEntry.ROGUE_LEGACY_ONE) {
         for (let i = 0; i < saveConts.length; i++) {
@@ -157,6 +181,8 @@ export class AppController {
 
     discardChangesDisabled.set(true);
     saveChangesDisabled.set(true);
+    
+    AppController.log(`Finished loading saves for Rogue Legacy ${get(seriesEntry)}`);
   }
 
   /**
@@ -187,7 +213,7 @@ export class AppController {
       const saveFile = saveFileObj[fileName];
 
       if (cTabs[fileName]) {
-        const filePath = await path.join(get(saveDirPath), fileName);
+        const filePath = await path.join(get(saveDirPath), get(selectedProfile), fileName);
         const newData = changes[i][1];
 
         const success = saveFile.fromJson(newData);
@@ -267,5 +293,6 @@ export class AppController {
     if (AppController.gameVersionSub) AppController.gameVersionSub();
     if (AppController.saveDirPathSub) AppController.saveDirPathSub();
     if (AppController.selectedTabSub) AppController.selectedTabSub();
+    if (AppController.selectedProfileSub) AppController.selectedProfileSub();
   }
 }

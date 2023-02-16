@@ -4,6 +4,8 @@ import { SeriesEntry } from "./lib/model/SeriesEntry";
 import type { SaveFile } from "./lib/model/SaveFile";
 
 export const saveDirPath = writable("");
+export const availableProfiles:Writable<string[]> = writable([]);
+export const selectedProfile = writable("");
 export const seriesEntry = writable(SeriesEntry.ROGUE_LEGACY_ONE);
 export const gameVersion = writable("");
 

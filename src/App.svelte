@@ -24,7 +24,7 @@
 	import Titlebar from "./components/Titlebar.svelte";
     import { AppController } from "./lib/controllers/AppController";
     
-    import { discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, seriesEntry, showConfirmDiscard, showConfirmReload } from "./Stores";
+    import { availableProfiles, discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, selectedProfile, seriesEntry, showConfirmDiscard, showConfirmReload } from "./Stores";
     import ProgressBar from "./components/info/ProgressBar.svelte";
     import ConfirmModal from "./components/modals/ConfirmModal.svelte";
     import LoadBackupModal from "./components/modals/LoadBackupModal.svelte";
@@ -32,6 +32,7 @@
     import AboutModal from "./components/modals/AboutModal.svelte";
     import { onDestroy, onMount } from "svelte";
     import { getDefaultSaveDirectory } from "./lib/utils/Utils";
+    import DropDown from "./components/interactable/DropDown.svelte";
 
     let defaultSavePath:string = $saveDirPath;
     $: dispAboutModal = false
@@ -39,7 +40,9 @@
     async function loadSave(e:Event) {
         const path = (e.currentTarget as HTMLInputElement).value;
         $saveDirPath = path;
-        await AppController.loadSaves();
+    }
+    function setProfile(value:string) {
+        $selectedProfile = value;
     }
 
     async function confirmReload(e:Event) { $showConfirmReload = true; }
@@ -79,8 +82,8 @@
                 <div style="height: 1px; width: 7px;" />
                 <Button text={"Make Backup"} onClick={makeBackup} width={"100px"} />
             </div>
-            <div class="row">
-                <PathField fieldName="Placeholder" title={"Select your game data directory"} defaultPath={""} cVal={""} handler={() => {}} />
+            <div class="row" style="display:flex; flex-direction:row; justify-content:space-between;">
+                <DropDown fieldName="Save Profile" options={$availableProfiles} value={$selectedProfile} handler={setProfile} />
                 <div style="height: 1px; width: 7px;" />
                 <Button text={"Load Backup"} onClick={loadBackup} width={"100px"} />
             </div>
