@@ -91,7 +91,32 @@
         "width": 1170,
         "decorations": false,
         "center": true,
-        "visible": true
+        "visible": true,
+        "url": "index.html"
+      },
+      {
+        "label": "about",
+        "fullscreen": false,
+        "height": 498,
+        "resizable": false,
+        "title": "About",
+        "width": 436,
+        "decorations": false,
+        "center": true,
+        "visible": false,
+        "url": "src/windows/about/about.html"
+      },
+      {
+        "label": "backup",
+        "fullscreen": false,
+        "height": 740,
+        "resizable": true,
+        "title": "Backup Manager",
+        "width": 1170,
+        "decorations": false,
+        "center": true,
+        "visible": false,
+        "url": "src/windows/backup/backup.html"
       }
     ]
   }

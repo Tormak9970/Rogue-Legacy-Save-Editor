@@ -25,3 +25,6 @@ export const showConfirmReload = writable(false);
 
 export const discardChangesDisabled = writable(true);
 export const saveChangesDisabled = writable(true);
+
+export const showingAbout = writable(false);
+export const showingBackup = writable(false);

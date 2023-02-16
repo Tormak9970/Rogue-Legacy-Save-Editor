@@ -17,22 +17,22 @@
  -->
 <script lang="ts">
 	import { SvelteToast } from "@zerodevx/svelte-toast";
-    import Button from "./components/interactable/Button.svelte";
-    import Pane from "./components/layout/Pane.svelte";
-    import PathField from "./components/interactable/PathField.svelte";
-    import Tabs from "./components/tabs/Tabs.svelte";
-	import Titlebar from "./components/Titlebar.svelte";
-    import { AppController } from "./lib/controllers/AppController";
+    import Button from "../../components/interactable/Button.svelte";
+    import Pane from "../../components/layout/Pane.svelte";
+    import PathField from "../../components/interactable/PathField.svelte";
+    import Tabs from "../../components/tabs/Tabs.svelte";
+	import Titlebar from "../../components/Titlebar.svelte";
+    import { AppController } from "../../lib/controllers/AppController";
     
-    import { availableProfiles, discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, selectedProfile, seriesEntry, showConfirmDiscard, showConfirmReload } from "./Stores";
-    import ProgressBar from "./components/info/ProgressBar.svelte";
-    import ConfirmModal from "./components/modals/ConfirmModal.svelte";
-    import LoadBackupModal from "./components/modals/LoadBackupModal.svelte";
-    import ReloadButton from "./components/interactable/ReloadButton.svelte";
-    import AboutModal from "./components/modals/AboutModal.svelte";
+    import { availableProfiles, discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, selectedProfile, seriesEntry, showConfirmDiscard, showConfirmReload } from "../../Stores";
+    import ProgressBar from "../../components/info/ProgressBar.svelte";
+    import ConfirmModal from "../../components/modals/ConfirmModal.svelte";
+    import LoadBackupModal from "../../components/modals/LoadBackupModal.svelte";
+    import ReloadButton from "../../components/interactable/ReloadButton.svelte";
+    import AboutModal from "../../components/modals/AboutModal.svelte";
     import { onDestroy, onMount } from "svelte";
-    import { getDefaultSaveDirectory } from "./lib/utils/Utils";
-    import DropDown from "./components/interactable/DropDown.svelte";
+    import { getDefaultSaveDirectory } from "../../lib/utils/Utils";
+    import DropDown from "../../components/interactable/DropDown.svelte";
 
     let defaultSavePath:string = $saveDirPath;
     $: dispAboutModal = false
