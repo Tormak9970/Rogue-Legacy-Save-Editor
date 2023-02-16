@@ -6,8 +6,8 @@ import { toast } from "@zerodevx/svelte-toast";
 export class ToasterController {
   private static getAppToastTheme() {
     return {
-      "--toastBackground": "#d87e08",
-      "--toastBarBackground": "#ff6600",
+      "--toastBackground": "#22aeff",
+      "--toastBarBackground": "#227AFF",
       "--toastColor": "rgb(231, 231, 231)",
     };
   }

@@ -69,16 +69,21 @@ export class AppController {
 
     if (!AppController.saveDirPathSub) {
       AppController.saveDirPathSub = saveDirPath.subscribe(async (newVal:string) => {
-        AppController.log(`Updated save dir for Rogue Legacy ${get(seriesEntry)} to ${newVal}`);
-
         const saveDirConts = await fs.readDir(newVal);
         const profileFolders = saveDirConts.filter((entry) => entry.name.toLowerCase().includes("profile"));
 
-        if (profileFolders) {
+        if (profileFolders.length > 0) {
           availableProfiles.set(profileFolders.map((entry) => entry.name));
           selectedProfile.set(get(availableProfiles)[0]);
         } else {
-          ToasterController.showGenericToast("Select a folder with profiles inside");
+          availableProfiles.set([]);
+          selectedProfile.set("Invalid Save Dir");
+          unchangedTabs.set({});
+          changedTabs.set({});
+          tabs.set({});
+          selectedTab.set("");
+
+          ToasterController.showGenericToast("Select a folder with profiles");
         }
 
         await SettingsManager.updateSettings({
@@ -90,8 +95,9 @@ export class AppController {
 
     if (!AppController.selectedProfileSub) {
       AppController.selectedProfileSub = selectedProfile.subscribe(async (newVal:string) => {
-        AppController.log(`Updated selected profile for Rogue Legacy ${get(seriesEntry)} to ${newVal}`);
-        await AppController.loadSaves();
+        if (newVal?.toLowerCase().includes("profile")) {
+          await AppController.loadSaves();
+        }
       });
     }
   }
@@ -124,6 +130,7 @@ export class AppController {
    * Loads the user's save files
    */
   static async loadSaves(): Promise<void> {
+    let wasEmpty = false;
     AppController.log(`Loading saves for Rogue Legacy ${get(seriesEntry)}`);
     const saveDir = get(saveDirPath);
     const profile = get(selectedProfile);
@@ -134,6 +141,8 @@ export class AppController {
     if (saveDir != "" && profile != "") {
       const loaderId = ToasterController.showLoaderToast("Loading save data");
       const saveConts = await fs.readDir(await path.join(saveDir, profile));
+
+      if (saveConts.length == 0) wasEmpty = true;
 
       if (get(seriesEntry) == SeriesEntry.ROGUE_LEGACY_ONE) {
         for (let i = 0; i < saveConts.length; i++) {
@@ -170,7 +179,11 @@ export class AppController {
       ToasterController.remLoaderToast(loaderId);
 
       setTimeout(() => {
-        ToasterController.showSuccessToast("Saves loaded!");
+        if (wasEmpty) {
+          ToasterController.showGenericToast("No save files found");
+        } else {
+          ToasterController.showSuccessToast("Saves loaded!");
+        }
       }, 500);
     }
 

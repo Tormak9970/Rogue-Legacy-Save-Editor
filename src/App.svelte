@@ -39,9 +39,11 @@
 
     async function loadSave(e:Event) {
         const path = (e.currentTarget as HTMLInputElement).value;
+        AppController.log(`Updated save dir for Rogue Legacy ${$seriesEntry+1} to ${path}`);
         $saveDirPath = path;
     }
     function setProfile(value:string) {
+        AppController.log(`Updated selected profile for Rogue Legacy ${$seriesEntry+1} to ${value}`);
         $selectedProfile = value;
     }
 
