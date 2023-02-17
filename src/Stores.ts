@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import { SeriesEntry } from "./lib/model/SeriesEntry";
 import type { SaveFile } from "./lib/model/SaveFile";
+import { sharedStore } from "./lib/utils/SharedStore";
 
 export const saveDirPath = writable("");
 export const availableProfiles:Writable<string[]> = writable([]);
@@ -26,5 +27,5 @@ export const showConfirmReload = writable(false);
 export const discardChangesDisabled = writable(true);
 export const saveChangesDisabled = writable(true);
 
-export const showingAbout = writable(false);
-export const showingBackup = writable(false);
+export const showingAbout = sharedStore(false, "showingAbout");
+export const showingBackup = sharedStore(false, "showingBackup");
