@@ -1,4 +1,4 @@
-import { writable, type Updater } from "svelte/store";
+import { writable, type Updater, type Subscriber } from "svelte/store";
 
 /**
  * Creates a new Svelte store that broadcasts updates to other windows.
@@ -30,7 +30,15 @@ export function sharedStore<T>(initialValue:T, name:string) {
 
       return updatedValue;
     });
+  }
 
+  const subscribeWrapper = (run:Subscriber<T>) => {
+    const unsub = subscribe(run);
+
+    return () => {
+      bc.close();
+      unsub();
+    };
   }
 
   bc.onmessage = (event:MessageEvent<any>) => {
@@ -41,7 +49,7 @@ export function sharedStore<T>(initialValue:T, name:string) {
   }
 
   return {
-    subscribe,
+    "subscribe": subscribeWrapper,
     "set": setWrapper,
     "update": updateWrapper
   }
