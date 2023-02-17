@@ -19,7 +19,6 @@
   import type { FileEntry } from "@tauri-apps/api/fs";
   import { onMount } from "svelte";
   import { AppController } from "../../lib/controllers/AppController";
-  import { showLoadBackupModal } from "../../Stores";
   import Button from "../../components/interactable/Button.svelte";
   import Pane from "../../components/layout/Pane.svelte";
 
@@ -45,7 +44,7 @@
   let profile = "";
 
   function close() {
-    $showLoadBackupModal = false;
+    AppController.hideBackupWindow();
   }
 
   async function restore() {

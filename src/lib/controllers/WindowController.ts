@@ -27,7 +27,6 @@ export class WindowController {
    * Hides the about window.
    */
   hideAboutWindow() {
-    console.log("hiding about window");
     showingAbout.set(false);
     this.aboutWindow.hide();
   }
@@ -44,7 +43,6 @@ export class WindowController {
    * Hides the backup window.
    */
   hideBackupWindow() {
-    console.log("hiding backup window");
     showingBackup.set(false);
     this.backupWindow.hide();
   }
