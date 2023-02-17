@@ -26,6 +26,7 @@ import { RogueOneSaveFileNames } from "../model/SaveFileNames";
 import { Rogue1Player } from "../model/rogue-one-formats/RogueLegacyPlayer";
 import { Rogue1BP } from "../model/rogue-one-formats/RogueLegacyBP";
 import { Rogue1Lineage } from "../model/rogue-one-formats/RogueLegacyLineage";
+import { WindowController } from "./WindowController";
 
 /**
  * The main controller for the application
@@ -34,6 +35,7 @@ export class AppController {
   private static logFilePath = "";
   static logController = new LogController();
   static backupsController = new BackupsController();
+  static windowController = new WindowController();
 
   private static seriesEntrySub:Unsubscriber;
   private static gameVersionSub:Unsubscriber;
@@ -296,6 +298,34 @@ export class AppController {
   static error(message:string) {
     AppController.logController.error(message);
     console.error(message);
+  }
+
+  /**
+   * Shows the about window.
+   */
+  static showAboutWindow(): void {
+    AppController.windowController.showAboutWindow();
+  }
+
+  /**
+   * Hides the about window.
+   */
+  static hideAboutWindow(): void {
+    AppController.windowController.hideAboutWindow();
+  }
+
+  /**
+   * Shows the backup window.
+   */
+  static showBackupWindow(): void {
+    AppController.windowController.showBackupWindow();
+  }
+
+  /**
+   * Hides the backup window.
+   */
+  static hideBackupWindow(): void {
+    AppController.windowController.hideBackupWindow();
   }
 
   /**

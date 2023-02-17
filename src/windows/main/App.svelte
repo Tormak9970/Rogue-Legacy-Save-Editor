@@ -58,7 +58,10 @@
     async function makeBackup(e:Event) { await AppController.backup(); }
     async function loadBackup(e:Event) { await AppController.loadBackups(); }
 
-    function showAboutModal(e:Event) { dispAboutModal = true; }
+    function showAboutModal(e:Event) {
+        dispAboutModal = true;
+        AppController.showAboutWindow();
+    }
 
     function switchGameVersion(e:Event) { AppController.switchGameVersion(); }
 
