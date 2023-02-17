@@ -44,7 +44,13 @@
         "all": false,
         "open": true
       },
-      "window": { "all": true }
+      "window": { "all": true },
+      "process": {
+        "all": false,
+        "exit": true,
+        "relaunch": false,
+        "relaunchDangerousAllowSymlinkMacos": false
+      }
     },
     "bundle": {
       "active": true,
@@ -97,10 +103,10 @@
       {
         "label": "about",
         "fullscreen": false,
-        "height": 498,
+        "height": 550,
         "resizable": false,
         "title": "About",
-        "width": 436,
+        "width": 448,
         "decorations": false,
         "center": true,
         "visible": false,

@@ -24,7 +24,7 @@
 	import Titlebar from "../../components/Titlebar.svelte";
     import { AppController } from "../../lib/controllers/AppController";
     
-    import { availableProfiles, discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, selectedProfile, seriesEntry, showConfirmDiscard, showConfirmReload } from "../../Stores";
+    import { availableProfiles, discardChangesDisabled, loaderProgress, saveChangesDisabled, saveDirPath, selectedProfile, seriesEntry, showConfirmDiscard, showConfirmReload, showingAbout } from "../../Stores";
     import ProgressBar from "../../components/info/ProgressBar.svelte";
     import ConfirmModal from "../../components/modals/ConfirmModal.svelte";
     import LoadBackupModal from "../../components/modals/LoadBackupModal.svelte";
@@ -35,7 +35,6 @@
     import DropDown from "../../components/interactable/DropDown.svelte";
 
     let defaultSavePath:string = $saveDirPath;
-    $: dispAboutModal = false
 
     async function loadSave(e:Event) {
         const path = (e.currentTarget as HTMLInputElement).value;
@@ -59,7 +58,6 @@
     async function loadBackup(e:Event) { await AppController.loadBackups(); }
 
     function showAboutModal(e:Event) {
-        dispAboutModal = true;
         AppController.showAboutWindow();
     }
 
@@ -75,10 +73,10 @@
 </script>
 
 <main>
-	<Titlebar />
+	<Titlebar title="Editor v{__APP_VERSION__} - Editing Rogue Legacy {$seriesEntry + 1}" />
     <ConfirmModal width={"250px"} show={$showConfirmDiscard} message={"Are you sure you want to discard your changes?"} onConfirm={discardChanges} onCancel={async () => { $showConfirmDiscard = false; }} />
     <ConfirmModal width={"300px"} show={$showConfirmReload} message={"Are you sure you want to reload? You will loose your changes."} onConfirm={reload} onCancel={async () => { $showConfirmReload = false; }} />
-    <AboutModal show={dispAboutModal} closeFunc={() => { dispAboutModal = false; }} />
+    <AboutModal show={$showingAbout} />
     <LoadBackupModal />
 	<div class="content">
         <Pane title="Paths" width={"calc(100% - 34px)"}>
