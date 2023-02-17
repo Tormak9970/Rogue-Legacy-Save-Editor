@@ -115,10 +115,10 @@
       {
         "label": "backup",
         "fullscreen": false,
-        "height": 740,
+        "height": 300,
         "resizable": true,
         "title": "Backup Manager",
-        "width": 1170,
+        "width": 460,
         "decorations": false,
         "center": true,
         "visible": false,

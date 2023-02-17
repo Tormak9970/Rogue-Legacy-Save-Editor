@@ -16,52 +16,57 @@
  along with this program. If not, see <https://www.gnu.org/licenses/>
  -->
 <script lang="ts">
+  import { fs } from "@tauri-apps/api";
+  import { onMount } from "svelte";
   import Button from "../../components/interactable/Button.svelte";
   import Pane from "../../components/layout/Pane.svelte";
+  import BackupEntry from "./BackupEntry.svelte";
   import Titlebar from "../../components/Titlebar.svelte";
   import { AppController } from "../../lib/controllers/AppController";
-
-  function openLink(link: string) {
-    open(link);
-  }
+  import { seriesEntry, showingBackup } from "../../Stores";
 
   function close() {
-    AppController.hideAboutWindow();
+    AppController.hideBackupWindow();
   }
+
+  let backups = [];
+
+  onMount(async () => {
+    showingBackup.subscribe(async (val) => {
+      if (val) {
+        backups = [];
+
+        const backupConts = await fs.readDir(
+          AppController.backupsController.getBackupDir()
+        );
+
+        for (let i = 0; i < backupConts.length; i++) {
+          const backupFile = backupConts[i];
+
+          backups.push(backupFile);
+        }
+      }
+
+      backups = [...backups];
+    });
+  });
 </script>
 
 <main>
-  <Titlebar title="About" />
+  <Titlebar title="Choose a backup to recover" />
   <div class="content">
-    <Pane width={"calc(100% - 34px)"}>
-      <div class="header">
-          About
-      </div>
-      <div class="message">
-          Rogue Legacy Save Editor is a tool for viewing and modifying game saves from Rogue Legacy 1 & 2
-      </div>
-      <div class="header">
-          Licensing
-      </div>
-      <div class="message">
-          Copyright (C) 2023 Travis Lane (Tormak)<br/>
-          <br/>
-          This program is free software: you can redistribute it and/or modify<br/>
-          it under the terms of the GNU General Public License as published by<br/>
-          the Free Software Foundation, either version 3 of the License, or<br/>
-          (at your option) any later version.<br/>
-          <br/>
-          This program is distributed in the hope that it will be useful,<br/>
-          but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>
-          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the<br/>
-          GNU General Public License for more details.<br/>
-          <br/>
-          You should have received a copy of the GNU General Public License<br/>
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          along with this program. If not, see <a href="" on:click={() => { openLink("https://www.gnu.org/licenses/")}}>https://www.gnu.org/licenses/</a>
+    <Pane title={"Choose a backup to recover"} width={"calc(100% - 42px)"} height={"calc(100% - 48px)"}>
+      <div class="backups-cont">
+        {#if backups.length > 0}
+          {#each backups as backup}
+            <BackupEntry backupFile={backup} />
+          {/each}
+        {:else}
+          <div style="text-align: center;">No backups detected for Rogue Legacy {$seriesEntry + 1}</div>
+        {/if}
       </div>
       <div class="buttons">
-          <Button text={"Close"} onClick={close} />
+        <Button text={"Cancel"} onClick={close} width={"100%"} />
       </div>
     </Pane>
   </div>
@@ -94,9 +99,16 @@
     align-items: center;
   }
 
-  .header {
-    text-align: center;
-    font-size: 18px;
+  .backups-cont {
+    background-color: var(--background);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    padding-top: 7px;
+
+    height: calc(100% - 40px);
   }
 
   .buttons {
@@ -104,17 +116,5 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
-  }
-
-  .message {
-    font-size: 12px;
-  }
-
-  a {
-    color: #58a6ff;
-  }
-
-  a:hover {
-    color: #85bdfd;
   }
 </style>

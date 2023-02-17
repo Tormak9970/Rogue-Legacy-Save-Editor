@@ -36,17 +36,20 @@
             isMaxed = !isMaxed;
         });
         close.addEventListener('click', async () => {
+            console.log(title);
             if (title == "About") {
                 AppController.hideAboutWindow();
-            } else if (title == "") {
+            } else if (title == "Choose a backup to recover") {
                 AppController.hideBackupWindow();
             } else {
                 await exit(0);
             }
         });
 
-        await AppController.init();
-        await AppController.setup();
+        if (title.indexOf("Editor") == 0) {
+            await AppController.init();
+            await AppController.setup();
+        }
     });
 </script>
 

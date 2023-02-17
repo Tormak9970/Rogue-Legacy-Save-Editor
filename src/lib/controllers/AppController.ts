@@ -208,13 +208,6 @@ export class AppController {
   }
 
   /**
-   * Load up the existing backups
-   */
-  static async loadBackups(): Promise<void> {
-    await AppController.backupsController.showBackupsModal();
-  }
-
-  /**
    * Saves the current changes
    */
   static async saveChanges(): Promise<void> {

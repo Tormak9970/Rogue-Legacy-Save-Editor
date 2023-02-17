@@ -1,4 +1,5 @@
 import { WebviewWindow } from '@tauri-apps/api/window';
+import { showingAbout, showingBackup } from "../../Stores";
 
 /**
  * Controller to handle the app's various window.
@@ -18,6 +19,7 @@ export class WindowController {
    * Shows the about window.
    */
   showAboutWindow() {
+    showingAbout.set(true);
     this.aboutWindow.show();
   }
 
@@ -25,6 +27,8 @@ export class WindowController {
    * Hides the about window.
    */
   hideAboutWindow() {
+    console.log("hiding about window");
+    showingAbout.set(false);
     this.aboutWindow.hide();
   }
 
@@ -32,6 +36,7 @@ export class WindowController {
    * Shows the backup window.
    */
   showBackupWindow() {
+    showingBackup.set(true);
     this.backupWindow.show();
   }
 
@@ -39,6 +44,8 @@ export class WindowController {
    * Hides the backup window.
    */
   hideBackupWindow() {
+    console.log("hiding backup window");
+    showingBackup.set(false);
     this.backupWindow.hide();
   }
 }

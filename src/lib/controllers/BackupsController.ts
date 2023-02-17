@@ -1,7 +1,7 @@
 import { fs, path } from "@tauri-apps/api";
 import JSZip from "jszip";
 import { get } from "svelte/store";
-import { saveDirPath, selectedProfile, showLoadBackupModal } from "../../Stores";
+import { saveDirPath, selectedProfile } from "../../Stores";
 import { ToasterController } from "./ToasterController";
 import { isSaveFile } from "../utils/Utils";
 
@@ -149,13 +149,6 @@ export class BackupsController {
     setTimeout(() => {
       ToasterController.showSuccessToast("Backup complete!");
     }, 500);
-  }
-
-  /**
-   * Displays the backup selection modal
-   */
-  async showBackupsModal() {
-    showLoadBackupModal.set(true);
   }
 
   /**
