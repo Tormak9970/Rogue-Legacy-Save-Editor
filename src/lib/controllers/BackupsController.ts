@@ -1,9 +1,10 @@
 import { fs, path } from "@tauri-apps/api";
 import JSZip from "jszip";
 import { get } from "svelte/store";
-import { saveDirPath, selectedProfile } from "../../Stores";
+import { saveDirPath, selectedProfile, seriesEntry } from "../../Stores";
 import { ToasterController } from "./ToasterController";
 import { isSaveFile } from "../utils/Utils";
+import { SeriesEntry } from "../model/SeriesEntry";
 
 type SaveData = {
   saveSlot: string;
@@ -33,8 +34,8 @@ export class BackupsController {
    * Gets the save backup directory
    * @returns The save backup directory
    */
-  getBackupDir(): string {
-    return this.backupDir;
+  async getBackupDir(): Promise<string> {
+    return await path.join(this.backupDir, this.getSubDir());
   }
 
   /**
@@ -43,6 +44,14 @@ export class BackupsController {
    */
   setBackupDir(newDir: string) {
     this.backupDir = newDir;
+  }
+
+  /**
+   * Determines the backup subdirectory to write to.
+   * @returns The backup subdirectory to write to.
+   */
+  private getSubDir(): string {
+    return get(seriesEntry) === SeriesEntry.ROGUE_LEGACY_ONE ? "rogueLegacy1" : "rogueLegacy2";
   }
 
   /**
@@ -142,7 +151,7 @@ export class BackupsController {
       compression: "DEFLATE",
       compressionOptions: { level: 9 },
     });
-    await fs.writeBinaryFile(await path.join(this.backupDir, zipName), zipData);
+    await fs.writeBinaryFile(await path.join(this.backupDir, this.getSubDir(), zipName), zipData);
 
     ToasterController.remLoaderToast(loaderId);
 

@@ -16,7 +16,7 @@
  along with this program. If not, see <https://www.gnu.org/licenses/>
  -->
 <script lang="ts">
-  import { fs } from "@tauri-apps/api";
+  import { fs, path } from "@tauri-apps/api";
   import { onMount } from "svelte";
   import Button from "../../components/interactable/Button.svelte";
   import Pane from "../../components/layout/Pane.svelte";
@@ -36,9 +36,7 @@
       if (val) {
         backups = [];
 
-        const backupConts = await fs.readDir(
-          AppController.backupsController.getBackupDir()
-        );
+        const backupConts = await fs.readDir(await AppController.backupsController.getBackupDir());
 
         for (let i = 0; i < backupConts.length; i++) {
           const backupFile = backupConts[i];

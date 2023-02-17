@@ -32,15 +32,6 @@ export function sharedStore<T>(initialValue:T, name:string) {
     });
   }
 
-  const subscribeWrapper = (run:Subscriber<T>) => {
-    const unsub = subscribe(run);
-
-    return () => {
-      bc.close();
-      unsub();
-    };
-  }
-
   bc.onmessage = (event:MessageEvent<any>) => {
     const data = event.data;
     if (data.name === name) {
@@ -49,7 +40,7 @@ export function sharedStore<T>(initialValue:T, name:string) {
   }
 
   return {
-    "subscribe": subscribeWrapper,
+    subscribe,
     "set": setWrapper,
     "update": updateWrapper
   }

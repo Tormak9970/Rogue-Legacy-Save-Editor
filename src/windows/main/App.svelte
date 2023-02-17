@@ -106,7 +106,6 @@
     }
 
     showingAboutUnsub = showingAbout.subscribe((newVal) => {
-      console.log(newVal)
       showFader = newVal || $showingBackup;
     });
 

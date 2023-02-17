@@ -115,8 +115,12 @@ export class AppController {
     await AppController.logController.cleanLogFile();
 
     const backupPath = await path.join(await path.appDataDir(), "backups");
+    const rogueOneBackupPath = await path.join(backupPath, "rogueLegacy1");
+    const rogueTwoBackupPath = await path.join(backupPath, "rogueLegacy2");
 
     if (!(await fs.exists(backupPath))) await fs.createDir(backupPath);
+    if (!(await fs.exists(rogueOneBackupPath))) await fs.createDir(rogueOneBackupPath);
+    if (!(await fs.exists(rogueTwoBackupPath))) await fs.createDir(rogueTwoBackupPath);
     AppController.backupsController.setBackupDir(backupPath);
   }
 
