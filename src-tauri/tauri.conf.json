@@ -123,6 +123,18 @@
         "center": true,
         "visible": false,
         "url": "src/windows/backup/backup.html"
+      },
+      {
+        "label": "splashscreen",
+        "fullscreen": false,
+        "height": 300,
+        "resizable": false,
+        "title": "Splashscreen",
+        "width": 300,
+        "decorations": false,
+        "center": true,
+        "visible": true,
+        "url": "src/windows/splashscreen/splashscreen.html"
       }
     ]
   }

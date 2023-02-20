@@ -24,6 +24,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         about: resolve(__dirname, 'src/windows/about/about.html'),
         backup: resolve(__dirname, 'src/windows/backup/backup.html'),
+        splashscreen: resolve(__dirname, 'src/windows/splashscreen/splashscreen.html'),
       },
     },
     // don't minify for debug builds

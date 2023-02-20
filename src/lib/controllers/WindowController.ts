@@ -8,11 +8,41 @@ export class WindowController {
   private mainWindow: WebviewWindow;
   private aboutWindow: WebviewWindow;
   private backupWindow: WebviewWindow;
+  private splashscreenWindow: WebviewWindow;
 
   constructor() {
     this.mainWindow = WebviewWindow.getByLabel('main');
     this.aboutWindow = WebviewWindow.getByLabel('about');
     this.backupWindow = WebviewWindow.getByLabel('backup');
+    this.splashscreenWindow = WebviewWindow.getByLabel('splashscreen');
+  }
+
+  /**
+   * Shows the main window.
+   */
+  showMainWindow() {
+    this.mainWindow.show();
+  }
+
+  /**
+   * Hides the main window.
+   */
+  hideMainWindow() {
+    this.mainWindow.hide();
+  }
+
+  /**
+   * Shows the splashscreen window.
+   */
+  showSplashscreenWindow() {
+    this.splashscreenWindow.show();
+  }
+
+  /**
+   * Hides the splashscreen window.
+   */
+  hideSplashscreenWindow() {
+    this.splashscreenWindow.hide();
   }
 
   /**

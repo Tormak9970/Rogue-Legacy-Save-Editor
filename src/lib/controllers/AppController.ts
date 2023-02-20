@@ -298,6 +298,34 @@ export class AppController {
   }
 
   /**
+   * Shows the main window.
+   */
+  static showMainWindow() {
+    AppController.windowController.showMainWindow();
+  }
+
+  /**
+   * Hides the main window.
+   */
+  static hideMainWindow() {
+    AppController.windowController.hideMainWindow();
+  }
+
+  /**
+   * Shows the splashscreen window.
+   */
+  static showSplashscreenWindow() {
+    AppController.windowController.showSplashscreenWindow();
+  }
+
+  /**
+   * Hides the splashscreen window.
+   */
+  static hideSplashscreenWindow() {
+    AppController.windowController.hideSplashscreenWindow();
+  }
+
+  /**
    * Shows the about window.
    */
   static showAboutWindow(): void {
