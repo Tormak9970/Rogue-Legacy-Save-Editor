@@ -24,7 +24,8 @@
           "$RESOURCE/**",
           "$DATA/**",
           "$APPDATA/**",
-          "$APPCONFIG/**"
+          "$APPCONFIG/**",
+          "$HOME/AppData/LocalLow/**"
         ]
       },
       "protocol": {
@@ -37,7 +38,8 @@
           "$RESOURCE/**",
           "$DATA/**",
           "$APPDATA/**",
-          "$APPCONFIG/**"
+          "$APPCONFIG/**",
+          "$HOME/AppData/LocalLow/**"
         ]
       },
       "shell": {
