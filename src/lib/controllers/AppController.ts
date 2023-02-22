@@ -22,11 +22,12 @@ import { SettingsManager } from "../utils/SettingsManager";
 import { SeriesEntry } from "../model/SeriesEntry";
 import { LogController } from "./LogController";
 import type { SaveFile } from "../model/SaveFile";
-import { RogueOneSaveFileNames } from "../model/SaveFileNames";
+import { RogueOneSaveFileNames, RogueTwoSaveFileNames } from "../model/SaveFileNames";
 import { Rogue1Player } from "../model/rogue-one-formats/RogueLegacyPlayer";
 import { Rogue1BP } from "../model/rogue-one-formats/RogueLegacyBP";
 import { Rogue1Lineage } from "../model/rogue-one-formats/RogueLegacyLineage";
 import { WindowController } from "./WindowController";
+import { Rogue2Player } from "../model/rogue-two-formats/Player";
 
 /**
  * The main controller for the application
@@ -137,7 +138,7 @@ export class AppController {
    */
   static async loadSaves(): Promise<void> {
     let wasEmpty = false;
-    AppController.log(`Loading saves for Rogue Legacy ${get(seriesEntry)}`);
+    AppController.log(`Loading saves for Rogue Legacy ${get(seriesEntry) + 1}`);
     const saveDir = get(saveDirPath);
     const profile = get(selectedProfile);
 
@@ -179,7 +180,33 @@ export class AppController {
           }
         }
       } else {
+        for (let i = 0; i < saveConts.length; i++) {
+          const saveFilePath = saveConts[i];
+  
+          if (isSaveFile(saveFilePath.name)) {
+            const data = await fs.readBinaryFile(saveFilePath.path);
+            const reader = new Reader(data);
+            let save: SaveFile;
 
+            switch (saveFilePath.name) {
+              case RogueTwoSaveFileNames.PLAYER:
+                save = new Rogue2Player(reader);
+                break;
+              // case RogueOneSaveFileNames.PLAYER:
+              //   save = new Rogue1Player(reader);
+              //   break;
+              // case RogueOneSaveFileNames.LINEAGE:
+              //   save = new Rogue1Lineage(reader);
+              //   break;
+            }
+  
+            if (save) {
+              newTabs[saveFilePath.name] = save.asJson();
+              newSaveFiles[saveFilePath.name] = save;
+              wasChanged[saveFilePath.name] = false;
+            }
+          }
+        }
       }
 
       ToasterController.remLoaderToast(loaderId);
@@ -201,7 +228,7 @@ export class AppController {
     discardChangesDisabled.set(true);
     saveChangesDisabled.set(true);
     
-    AppController.log(`Finished loading saves for Rogue Legacy ${get(seriesEntry)}`);
+    AppController.log(`Finished loading saves for Rogue Legacy ${get(seriesEntry) + 1}`);
   }
 
   /**
