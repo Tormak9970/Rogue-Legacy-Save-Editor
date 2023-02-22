@@ -54,6 +54,10 @@ export class Rogue2Player implements SaveFile {
       fieldsList.push(field);
     }
 
+    reader.seek(1805, 0);
+
+    // gold saved offset is 5025
+
     console.log(`${formatType}:`, fieldsList);
     AppController.log("Finished reading Player.rc2dat");
   }
